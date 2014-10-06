@@ -1,23 +1,22 @@
 package net.nfiniteloop.loqale.backend;
 
 import com.google.appengine.api.datastore.GeoPt;
-import com.google.appengine.api.datastore.Key;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 /**
  * Created by vaek on 10/5/14.
  */
 @Entity
 public class User {
-    private Key key;
+    @Id
+    private Long id;
+    @Index
     private String userId;
     private String displayName;
     private String hometown;
     private GeoPt location;
-
-    public Key getKey() {
-        return key;
-    }
 
     public String getUserId() {
         return userId;

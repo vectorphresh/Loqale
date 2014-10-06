@@ -3,8 +3,9 @@ package net.nfiniteloop.loqale.backend;
 
 import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.GeoPt;
-import com.google.appengine.api.datastore.Key;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 import java.util.Date;
 
@@ -13,7 +14,10 @@ import java.util.Date;
  */
 @Entity
 public class Tag {
-    private Key key;
+    @Id
+    private Long id;
+    @Index
+    private String tagId;
     private GeoPt location;
     private String labels;
     private String text;
@@ -21,8 +25,8 @@ public class Tag {
     private Blob image;
     private Date createDate;
 
-    public Key getKey() {
-        return key;
+    public String getTagId() {
+        return tagId;
     }
 
     public GeoPt getLocation() {
@@ -47,6 +51,10 @@ public class Tag {
 
     public Date getCreateDate() {
         return createDate;
+    }
+
+    public void setTagId(String tagId) {
+        this.tagId = tagId;
     }
 
     public void setLocation(GeoPt location) {
