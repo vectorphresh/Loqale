@@ -1,7 +1,8 @@
 package net.nfiniteloop.loqale.backend;
 
-import com.google.appengine.api.datastore.Key;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 import java.util.Date;
 
@@ -10,14 +11,17 @@ import java.util.Date;
  */
 @Entity
 public class CheckIn {
-    private Key key;
+    @Id
+    private Long id;
+    @Index
+    private String checkInId;
     private String userId;
     private String placeId;
     private int rating;
     private Date checkInDate;
 
-    public Key getKey() {
-        return key;
+    public String getCheckInId() {
+        return checkInId;
     }
 
     public String getUserId() {
@@ -34,6 +38,10 @@ public class CheckIn {
 
     public Date getCheckInDate() {
         return checkInDate;
+    }
+
+    public void setCheckInId(String checkInId) {
+        this.checkInId = checkInId;
     }
 
     public void setUserId(String userId) {
