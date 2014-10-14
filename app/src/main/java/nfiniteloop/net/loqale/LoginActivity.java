@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 
 import android.app.LoaderManager.LoaderCallbacks;
-import android.content.ContentResolver;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
@@ -70,6 +69,13 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
 
         // Find the Google+ sign in button.
         mPlusSignInButton = (SignInButton) findViewById(R.id.plus_sign_in_button);
+
+        // Moved to resolve null pointer reference
+        mLoginFormView = findViewById(R.id.login_form);
+        mProgressView = findViewById(R.id.login_progress);
+        mEmailLoginFormView = findViewById(R.id.email_login_form);
+        mSignOutButtons = findViewById(R.id.plus_sign_out_buttons);
+
         if (supportsGooglePlayServices()) {
             // Set a listener to connect the user when the G+ button is clicked.
             mPlusSignInButton.setOnClickListener(new OnClickListener() {
@@ -109,10 +115,6 @@ public class LoginActivity extends PlusBaseActivity implements LoaderCallbacks<C
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-        mEmailLoginFormView = findViewById(R.id.email_login_form);
-        mSignOutButtons = findViewById(R.id.plus_sign_out_buttons);
     }
 
     private void populateAutoComplete() {
