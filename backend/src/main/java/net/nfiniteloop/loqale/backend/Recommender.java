@@ -1,11 +1,17 @@
 package net.nfiniteloop.loqale.backend;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by vaek on 10/5/14.
  */
-public class RecommenderServlet extends HttpServlet{
+public class Recommender extends HttpServlet{
+
+
     /* Working thoughts
           Think Thread Safety!!
           Think runtime!!
@@ -41,5 +47,8 @@ public class RecommenderServlet extends HttpServlet{
                 Package marked recommendations
             Return recommendation package.
     */
-
+    @Override
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String userId = req.getParameter("userID");
+    }
 }
