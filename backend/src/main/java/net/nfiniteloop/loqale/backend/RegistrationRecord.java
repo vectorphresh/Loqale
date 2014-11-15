@@ -13,6 +13,7 @@ public class RegistrationRecord {
 
     @Index
     private String regId;
+
     // you can add more fields...
 
     public RegistrationRecord() {}

@@ -22,16 +22,12 @@ class Recommendation {
     @Index
     private String recommendationId;
     private Date date;
-    private String explanation;
+    // TODO: Add private String explanation;
     private recommendationType recommendationType;
     private String contentId;
 
     public Date getDate() {
         return date;
-    }
-
-    public String getExplanation() {
-        return explanation;
     }
 
     public recommendationType getRecommendationType() {
@@ -48,10 +44,6 @@ class Recommendation {
 
     public void setDate(Date date) {
         this.date = date;
-    }
-
-    public void setExplanation(String explanation) {
-        this.explanation = explanation;
     }
 
     public void setRecommendationType(recommendationType type) {

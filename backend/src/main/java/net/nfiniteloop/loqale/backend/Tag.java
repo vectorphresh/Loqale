@@ -19,9 +19,7 @@ public class Tag {
     @Index
     private String tagId;
     private GeoPt location;
-    private String labels;
     private String text;
-    private String url;
     private Blob image;
     private Date createDate;
 
@@ -33,16 +31,8 @@ public class Tag {
         return location;
     }
 
-    public String getLabels() {
-        return labels;
-    }
-
     public String getText() {
         return text;
-    }
-
-    public String getUrl() {
-        return url;
     }
 
     public Blob getImage() {
@@ -61,16 +51,8 @@ public class Tag {
         this.location = location;
     }
 
-    public void setLabels(String labels) {
-        this.labels = labels;
-    }
-
     public void setText(String text) {
         this.text = text;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public void setImage(Blob image) {
