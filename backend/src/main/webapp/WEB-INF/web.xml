@@ -5,7 +5,7 @@
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>
-            <param-value>net.nfiniteloop.loqale.backend.RegistrationEndpoint, net.nfiniteloop.loqale.backend.MessagingEndpoint</param-value>
+            <param-value>net.nfiniteloop.loqale.backend.RegistrationEndpoint, net.nfiniteloop.loqale.backend.RecommendationEndpoint, net.nfiniteloop.loqale.backend.CheckInEndpoint, net.nfiniteloop.loqale.backend.PlaceEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
