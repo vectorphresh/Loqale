@@ -2,6 +2,7 @@ package nfiniteloop.net.loqale;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -52,6 +53,7 @@ public class LoginActivity extends Activity {
     private View mEmailLoginFormView;
     private View mSignOutButtons;
     private View mLoginFormView;
+    private Boolean loginSuccess;
 
     private static Registration registrationService = null;
 
@@ -62,8 +64,14 @@ public class LoginActivity extends Activity {
         mAuthTask = new UserLoginTask();
         mAuthTask.execute((Void) null);
 
+
     }
 
+    private void launchMainActivity(){
+        Intent intent;
+        intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+    }
 
     /**
      * Check if the device supports Google Play Services.  It's best
@@ -125,6 +133,7 @@ public class LoginActivity extends Activity {
             }
 
             // TODO: register the new account here.
+
             return true;
         }
 
@@ -133,6 +142,7 @@ public class LoginActivity extends Activity {
             mAuthTask = null;
 
             if (success) {
+                launchMainActivity();
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));

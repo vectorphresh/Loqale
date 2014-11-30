@@ -46,10 +46,6 @@
             android:name="nfiniteloop.net.loqale.MainActivity"
             android:label="@string/title_activity_main" >
         </activity>
-        <activity
-            android:name="nfiniteloop.net.loqale.MainActivity2"
-            android:label="@string/title_activity_main_activity2" >
-        </activity>
     </application>
 
 </manifest>

@@ -3,7 +3,8 @@
     tools:context="nfiniteloop.net.loqale.MainActivity" >
     <item android:id="@+id/action_example"
         android:title="@string/action_example"
-        android:showAsAction="withText|ifRoom" />
+        android:showAsAction="withText|ifRoom"
+        android:icon="@android:drawable/ic_menu_myplaces"/>
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
