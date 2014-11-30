@@ -8,6 +8,7 @@ import com.google.api.server.spi.response.CollectionResponse;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Named;
+import javax.jws.soap.SOAPBinding;
 
 import static net.nfiniteloop.loqale.backend.OfyService.ofy;
 
@@ -33,13 +34,16 @@ public class RegistrationEndpoint {
      */
     @ApiMethod(name = "register")
     public void registerDevice(@Named("regId") String regId) {
-        if(findRecord(regId) != null) {
+        if (findRecord(regId) != null) {
             log.info("Device " + regId + " already registered, skipping register");
             return;
         }
         RegistrationRecord record = new RegistrationRecord();
+        User user = new User();
         record.setRegId(regId);
+        user.setUserId(regId);
         ofy().save().entity(record).now();
+        ofy().save().entity(user).now();
     }
 
     /**
