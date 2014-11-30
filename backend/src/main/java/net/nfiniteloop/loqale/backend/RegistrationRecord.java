@@ -14,6 +14,8 @@ public class RegistrationRecord {
     @Index
     private String regId;
 
+    private String regHash;
+
     // you can add more fields...
 
     public RegistrationRecord() {}
@@ -24,5 +26,13 @@ public class RegistrationRecord {
 
     public void setRegId(String regId) {
         this.regId = regId;
+    }
+
+    public String getRegHash() {
+        return regHash;
+    }
+
+    public void setRegHash(String regHash) {
+        this.regHash = regHash;
     }
 }

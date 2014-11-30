@@ -17,6 +17,7 @@ public class Place  {
     private String name;
     private String address;
     private GeoPt location;
+    private String category;
 
     public String getName(){
         return name;
@@ -34,6 +35,10 @@ public class Place  {
         return placeId;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -48,5 +53,9 @@ public class Place  {
 
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
