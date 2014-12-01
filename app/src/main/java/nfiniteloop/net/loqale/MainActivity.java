@@ -16,23 +16,42 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import net.nfiniteloop.loqale.backend.checkins.Checkins;
 import net.nfiniteloop.loqale.backend.places.Places;
+import net.nfiniteloop.loqale.backend.places.model.Place;
 import net.nfiniteloop.loqale.backend.recommendations.Recommendations;
 
-public class MainActivity extends Activity {
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Logger;
 
-    /* aysnchronous support classes */
+public class MainActivity extends Activity {
+    // Logging for debugging
+    private Logger log = Logger.getLogger(MainActivity.class.getName());
+
+    // aysnchronous support classes
     private static LoqaleFeedGetter feedTask;
     private static RecommendationGetter recommendationTask;
     private static placeGetter placesTask;
     private static checkInHelper checkInsTask;
 
-    /* endpoint client services */
+    // endpoint client services
     private static Checkins checkInService;
     private static Places placesService;
     private static Recommendations recommendationService;
+
+    //container class for places fragment
+    private TextView placesView;
+    private ListView placesList;
+    private List<Place> places = null;
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -170,9 +189,9 @@ public class MainActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            /*
-            if (registrationService == null) { // Only do this once
-                Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+
+            if (placesService == null) { // Only do this once
+                Places.Builder builder = new Places.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
                         // - 10.0.2.2 is localhost's IP address in Android emulator
@@ -184,10 +203,8 @@ public class MainActivity extends Activity {
                                 abstractGoogleClientRequest.setDisableGZipContent(true);
                             }
                         });
-                // end options for devappserver
-                registrationService = builder.build();
+                placesService = builder.build();
             }
-            */
             return true;
         }
 
@@ -206,9 +223,8 @@ public class MainActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            /*
-            if (registrationService == null) { // Only do this once
-                Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+            if (checkInService == null) { // Only do this once
+                Checkins.Builder builder = new Checkins.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
                         // - 10.0.2.2 is localhost's IP address in Android emulator
@@ -220,10 +236,8 @@ public class MainActivity extends Activity {
                                 abstractGoogleClientRequest.setDisableGZipContent(true);
                             }
                         });
-                // end options for devappserver
-                registrationService = builder.build();
+                checkInService = builder.build();
             }
-            */
             return true;
         }
 
@@ -242,9 +256,8 @@ public class MainActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            /*
-            if (registrationService == null) { // Only do this once
-                Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+            if (recommendationService == null) { // Only do this once
+                Recommendations.Builder builder = new Recommendations.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
                         // - 10.0.2.2 is localhost's IP address in Android emulator
@@ -256,10 +269,8 @@ public class MainActivity extends Activity {
                                 abstractGoogleClientRequest.setDisableGZipContent(true);
                             }
                         });
-                // end options for devappserver
-                registrationService = builder.build();
+                recommendationService = builder.build();
             }
-            */
             return true;
         }
 
