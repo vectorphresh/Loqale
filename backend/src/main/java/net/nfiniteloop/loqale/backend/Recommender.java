@@ -22,7 +22,7 @@ import static net.nfiniteloop.loqale.backend.OfyService.ofy;
  */
 public class Recommender extends HttpServlet{
     private static final long serialVersionUID = 1L;
-
+    private static final int placeQueryLimit = 100;
     private static final Logger log = Logger.getLogger(Recommender.class.getName());
     private final int DEFAULT_FAR_DISTANCE_MULTI = 4;
 
@@ -105,7 +105,7 @@ public class Recommender extends HttpServlet{
             Double proximityLimit = recUser.get(0).getProximity();
             List<String> preferredCategories = new ArrayList<String>();
             similarPlaces =
-                    PlaceUtil.getPlacesByProximity(recUser.get(0).getLocation(), proximityLimit);
+                    PlaceUtil.getPlacesByProximity(recUser.get(0).getLocation(), proximityLimit, placeQueryLimit);
             // TODO: Filter places by category. Or better, move category filtering into ContentFilter
             //preferredCategories = recUser.get(0).getCategories();
             //for( String c : preferredCategories) {
