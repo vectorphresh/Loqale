@@ -10,7 +10,7 @@ import static net.nfiniteloop.loqale.backend.OfyService.ofy;
  */
 public class PlaceUtil {
     final static int radiusEarthMeters = 6378137;
-    public static List<Place> getPlacesByProximity(GeoPt origin, Double proximityMeters){
+    public static List<Place> getPlacesByProximity(GeoPt origin, Double proximityMeters, int count){
         List<Place> places = new LinkedList<Place>();
         double deltaLat = (float) proximityMeters.doubleValue() / radiusEarthMeters;
         double deltaLon =
@@ -19,10 +19,10 @@ public class PlaceUtil {
         float originLon = origin.getLongitude();
 
         //query objectify
-        places.addAll(ofy().load().type(Place.class).filter("latitude >=", originLat + deltaLat )
-                .filter("latitude <=", originLat - deltaLat )
+        places.addAll(ofy().load().type(Place.class).filter("latitude >=", originLat + deltaLat)
+                .filter("latitude <=", originLat - deltaLat)
                 .filter("longitude >=", originLon + deltaLon)
-                .filter("longitude <=", originLon - deltaLon).limit(100).list());
+                .filter("longitude <=", originLon - deltaLon).limit(count).list());
 
         return places;
     }
