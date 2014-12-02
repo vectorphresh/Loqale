@@ -13,9 +13,8 @@ public interface Filter {
      * Default filter will determine by distance similarity with previous check-ins in the
      * user profile
      */
-    public void filter( List<Recommendation> recommendationList);
+    public List<Recommendation> filter();
 
-    public void setProfile(Profile userProfile);
-
+    public void setUserId(String userId);
 
 }

@@ -1,6 +1,5 @@
 package net.nfiniteloop.loqale.backend;
 
-import com.google.appengine.api.datastore.Key;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -13,7 +12,7 @@ import java.util.Date;
  * Recommendation Class for Recommender App
  * Generic container for Place, Tag and Friend Recommendations
  */
-enum recommendationType {PLACE, TAG, USER}
+enum RecommendationType {PLACE, TAG, USER}
 
 @Entity
 class Recommendation {
@@ -23,14 +22,14 @@ class Recommendation {
     private String recommendationId;
     private Date date;
     // TODO: Add private String explanation;
-    private recommendationType recommendationType;
+    private RecommendationType recommendationType;
     private String contentId;
 
     public Date getDate() {
         return date;
     }
 
-    public recommendationType getRecommendationType() {
+    public RecommendationType getRecommendationType() {
         return recommendationType;
     }
 
@@ -46,7 +45,7 @@ class Recommendation {
         this.date = date;
     }
 
-    public void setRecommendationType(recommendationType type) {
+    public void setRecommendationType(RecommendationType type) {
         this.recommendationType = type;
     }
 
