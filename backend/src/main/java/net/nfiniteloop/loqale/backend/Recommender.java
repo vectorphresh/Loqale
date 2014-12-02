@@ -1,19 +1,19 @@
 package net.nfiniteloop.loqale.backend;
 
-import com.google.appengine.api.datastore.GeoPt;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.ListIterator;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import Jama.Matrix;
 
 import static net.nfiniteloop.loqale.backend.OfyService.ofy;
 
@@ -21,8 +21,9 @@ import static net.nfiniteloop.loqale.backend.OfyService.ofy;
  * Created by vaek on 10/5/14.
  */
 public class Recommender extends HttpServlet{
+    private static final long serialVersionUID = 1L;
 
-    private final int RAW_LIMIT = 100;
+    private static final Logger log = Logger.getLogger(Recommender.class.getName());
     private final int DEFAULT_FAR_DISTANCE_MULTI = 4;
 
     /* Working thoughts
@@ -64,9 +65,12 @@ public class Recommender extends HttpServlet{
     @Override
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String userId = req.getParameter("userID");
-        Profile userProfile = new Profile();
+        // Filtering module
+        ContentFilter contentFilter;
         // container to store matching places
+        List<Place> refinedPlaces = new LinkedList<Place>();
         List<Place> similarPlaces = new LinkedList<Place>();
+        List<Recommendation> filterResults = new ArrayList<Recommendation>();
         List<User> recUser = ofy().load().type(User.class).filter("userId", userId).list();
         // this query should never be empty. Might want to check though...
         List<CheckIn> userCheckIns = ofy().load().type(CheckIn.class).filter("userId", userId).list();
@@ -100,22 +104,31 @@ public class Recommender extends HttpServlet{
             //    send out cold recommendations
             Double proximityLimit = recUser.get(0).getProximity();
             List<String> preferredCategories = new ArrayList<String>();
-            // TODO: Make the following into a function
-            preferredCategories = recUser.get(0).getCategories();
-            for( String c : preferredCategories) {
-                // TODO: Need to apply proximityLimit;
-                similarPlaces.addAll(ofy().load().type(Place.class).filter("category", c).list());
-            }
-            if ( !similarPlaces.isEmpty()) {
-                // for each place, look for the relationship place.quality X place.quality = ident matrix
-                for (Place p : similarPlaces) {
-                    // if (p.quality x p.quality == identityMatrix )
-
+            similarPlaces =
+                    PlaceUtil.getPlacesByProximity(recUser.get(0).getLocation(), proximityLimit);
+            // TODO: Filter places by category. Or better, move category filtering into ContentFilter
+            //preferredCategories = recUser.get(0).getCategories();
+            //for( String c : preferredCategories) {
+            //    similarPlaces.addAll(ofy().load().type(Place.class).filter("category", c).list());
+            //}
+            ListIterator<Place> iter = similarPlaces.listIterator();
+            while ( iter.hasNext() ) {
+                Place singlePlace = iter.next();
+                similarPlaces.remove(0);
+                // for each place, use the quality relationships to sam ple places for A/B test
+                if (iter.hasNext()) {
+                    Matrix qualityMatrix = new Matrix(singlePlace.getQualityMatrix());
+                    Matrix pMatrix = new Matrix(iter.next().getQualityMatrix());
+                    pMatrix = pMatrix.times(qualityMatrix);
+                    if (!qualityMatrix.equals(pMatrix.inverse())) {
+                        refinedPlaces.add(iter.previous());
+                        refinedPlaces.add(singlePlace);
+                    }
                 }
-                // Filter recFilter = new RecommendationFilter(recUser.get(0).getUserId(), similarPlaces);
                 // List<Place> refinedPlaces = new LinkedList<Place>();
-                // refinedPlaces = recFilter.getResults();
             }
+            contentFilter = new ContentFilter(recUser.get(0).getUserId(), refinedPlaces);
+            filterResults = contentFilter.filter();
             // Redo process for ( proximityLimit * DEFAULT_FAR_DISTANCE_MULTIPLIER )
         }
         else {
@@ -142,8 +155,7 @@ public class Recommender extends HttpServlet{
             // friends
             // Feed the list of places to the filter
             // Filter recFilter = new RecommendationFilter( similarPlaces );
-            // List refinedPlaces = new LinkedList<Places>()
-            // rec filter removes places the user has checked in to and previous recomendations
+            // rec filter removes places the user has checked in to and previous recommendations
             // refinedPlaces = recFilter.getResults()
 
             // friendfilter iterates over friends checkins and does a placeId count. looks for collisions and mark common ids
@@ -155,7 +167,7 @@ public class Recommender extends HttpServlet{
             // send list of recommended places to user
 
         }
-        // send the results of the filtering
+        // send  filterResults the user
 
     }
 }
