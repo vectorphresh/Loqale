@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="nfiniteloop.net.loqale" >
+
     <!-- To access Google+ APIs: -->
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -41,10 +42,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="nfiniteloop.net.loqale.MainActivity"
             android:label="@string/title_activity_main" >
+        </activity>
+        <activity
+            android:name="nfiniteloop.net.loqale.SettingsActivity"
+            android:label="@string/title_activity_settings" >
         </activity>
     </application>
 

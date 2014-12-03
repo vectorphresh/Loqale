@@ -111,7 +111,6 @@ public class LoginActivity extends Activity {
                                 abstractGoogleClientRequest.setDisableGZipContent(true);
                             }
                         });
-                // end options for devappserver
                 // TODO: clean up end
                 registrationService = builder.build();
             }
