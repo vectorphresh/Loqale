@@ -115,6 +115,7 @@ public class LoginActivity extends Activity {
                 registrationService = builder.build();
             }
             // TODO: attempt authentication against a network service.
+            // TODO: Fix email authentication
             try {
                 final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
 
