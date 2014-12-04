@@ -56,7 +56,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
-    public static final String PREFS_NAME = "LoqaleData";
+
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -71,7 +71,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
         String deviceId = prefs.getString("deviceId", "");
         log.info("retrieved stored deviceID[" + deviceId + "]");
 
@@ -312,9 +312,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                 // TODO: clean up end
                 registrationService = builder.build();
             }
-            // TODO: attempt authentication against a network service.
-            // TODO: Fix email authentication
-            SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
             String storedEmail = prefs.getString("email", "");
             String storedPass  = prefs.getString("password", "");
 
@@ -362,7 +360,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
             if (success) {
                 // TODO: Encrypt the credentials
-                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("email", userEmail);
                 editor.putString("password", userPassword);

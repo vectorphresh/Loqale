@@ -3,6 +3,9 @@ package nfiniteloop.net.loqale;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -58,8 +61,9 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //Instantiate storage container for managing user identification info
+        //Get the users registration ID, and query the server to determine if they're new
+        SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        String deviceId = prefs.getString("deviceId", "");
 
         mTitle = getTitle();
 
@@ -102,9 +106,15 @@ public class MainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
-            return true;
+            showSettingsActivity();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSettingsActivity() {
+        Intent intent;
+        intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -282,5 +292,6 @@ public class MainActivity extends Activity {
 
         }
     }
+
 
 }

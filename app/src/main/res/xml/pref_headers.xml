@@ -5,11 +5,4 @@
     <header android:fragment="nfiniteloop.net.loqale.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
 
-    <header
-        android:fragment="nfiniteloop.net.loqale.SettingsActivity$NotificationPreferenceFragment"
-        android:title="@string/pref_header_notifications" />
-
-    <header android:fragment="nfiniteloop.net.loqale.SettingsActivity$DataSyncPreferenceFragment"
-        android:title="@string/pref_header_data_sync" />
-
 </preference-headers>

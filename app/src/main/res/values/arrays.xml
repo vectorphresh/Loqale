@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="recommendation_distance_entries">
+        <item>1 km</item>
+        <item>2 km</item>
+        <item>4 km</item>
+        <item>8 km</item>
+    </string-array>
+    <string-array name="recommendation_distance_values">
+        <item>1000</item>
+        <item>2000</item>
+        <item>4000</item>
+        <item>8000</item>
+    </string-array>
+</resources>
