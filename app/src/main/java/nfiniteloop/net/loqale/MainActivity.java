@@ -1,15 +1,10 @@
 package nfiniteloop.net.loqale;
 
-import android.app.Activity;
-
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -53,6 +48,7 @@ public class MainActivity extends Activity {
     private ListView placesList;
     private List<Place> places = null;
 
+
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
@@ -62,6 +58,8 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Instantiate storage container for managing user identification info
 
         mTitle = getTitle();
 

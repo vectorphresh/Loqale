@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Loqale</string>
     <string name="title_activity_main">Loqale Feed</string>
     <string name="title_section1">Feed</string>
