@@ -63,6 +63,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private EditText mDisplayNameView;
 
     private static Registration registrationService = null;
     private static final Logger log = Logger.getLogger(LoginActivity.class.getName());
@@ -78,7 +79,10 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         if(!deviceId.isEmpty()){
             launchMainActivity();
         }
-        // Set up the login form.
+        // Set up the login form
+        mDisplayNameView = (EditText) findViewById(R.id.user_disp_name);
+
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
@@ -124,7 +128,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         // Store values at the time of the login attempt.
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
-
+        String username = mDisplayNameView.getText().toString();
         boolean cancel = false;
         View focusView = null;
 
@@ -133,6 +137,12 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
+            cancel = true;
+        }
+
+        if (!TextUtils.isEmpty(username)){
+            mDisplayNameView.setError(getString(R.string.error_field_required));
+            focusView = mDisplayNameView;
             cancel = true;
         }
 
@@ -155,7 +165,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
+            mAuthTask = new UserLoginTask(username, email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -286,11 +296,13 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
         private final String userEmail;
         private final String userPassword;
+        private final String userName;
         private String deviceId;
 
-        public UserLoginTask(String email, String pasword) {
+        public UserLoginTask(String username, String email, String pasword) {
             userEmail = email;
             userPassword = pasword;
+            userName = username;
         }
 
         @Override
@@ -362,9 +374,11 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                 // TODO: Encrypt the credentials
                 SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("username", userName);
                 editor.putString("email", userEmail);
                 editor.putString("password", userPassword);
                 editor.putString("deviceId", deviceId);
+                editor.putBoolean("newUser", true);
                 editor.commit();
                 launchMainActivity();
                 finish();

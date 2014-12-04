@@ -23,6 +23,7 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import net.nfiniteloop.loqale.backend.checkins.Checkins;
+import net.nfiniteloop.loqale.backend.checkins.model.User;
 import net.nfiniteloop.loqale.backend.places.Places;
 import net.nfiniteloop.loqale.backend.places.model.Place;
 import net.nfiniteloop.loqale.backend.recommendations.Recommendations;
@@ -61,9 +62,25 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Get the users registration ID, and query the server to determine if they're new
+        // Lets check if were dealing with a new user
         SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        String deviceId = prefs.getString("deviceId", "");
+        Boolean newbie = prefs.getBoolean("newUser", true);
+        String userDevice = prefs.getString("deviceId", "");
+        if(newbie){
+            // add welcome message to main display
+            //
+            //
+            // push the users default credentials to the server
+            User newbieUser = new User();
+            if(!userDevice.isEmpty()) {
+                newbieUser.setUserId(userDevice);
+
+            }
+
+        }
+        else {
+
+        }
 
         mTitle = getTitle();
 
