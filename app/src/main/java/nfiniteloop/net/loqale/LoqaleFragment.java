@@ -10,7 +10,7 @@ import java.util.List;
  * A fragment representing a list of Items.
  * no listener, since were just displaying static items
  */
-public class LoqaleFeedFragment extends ListFragment {
+public class LoqaleFragment extends ListFragment {
 
     FeedAdapter adapter;
     private List<FeedRowItem> items;
@@ -19,7 +19,7 @@ public class LoqaleFeedFragment extends ListFragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public LoqaleFeedFragment() {
+    public LoqaleFragment() {
     }
 
     @Override

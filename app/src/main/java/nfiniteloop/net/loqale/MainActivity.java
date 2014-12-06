@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
     // Logging for debugging
     private Logger log = Logger.getLogger(MainActivity.class.getName());
 
-    // aysnchronous support classes
+    // asynchronous support classes
     private static LoqaleFeedGetter feedTask;
     private static RecommendationGetter recommendationTask;
     private static placeGetter placesTask;
@@ -62,6 +62,37 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // First we'll set up our actionbar and layout elements
+        ActionBar actionbar = getActionBar();
+        actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        // [BEGIN Source Citation] From Google Android Documentation
+        // https://developer.android.com/guide/topics/ui/actionbar.html
+        // TODO: Add the remaining fragments
+        // I'm going to be lazy I think and implement a places fragment that I can overload for
+        // the recommendation tab. I will hide the like(heart) button on the recommendations tab.
+        // 12/01/14: Yep Laziness wins! We'll extend the current fragment/adapter to support all
+        // tabs.
+        ActionBar.Tab feedTab = actionbar.newTab()
+                .setText(R.string.title_messages)
+                .setTabListener(new TabListener<LoqaleFragment> (
+                        this, "feed", LoqaleFragment.class));
+        actionbar.addTab(feedTab);
+
+        ActionBar.Tab placesTab = actionbar.newTab()
+                .setText(R.string.title_places)
+                .setTabListener(new TabListener<LoqaleFragment> (
+                        this, "places", LoqaleFragment.class));
+        actionbar.addTab(placesTab);
+
+        ActionBar.Tab recommendationTab = actionbar.newTab()
+                .setText(R.string.title_recommendation)
+                .setTabListener(new TabListener<LoqaleFragment> (
+                        this, "recommendation", LoqaleFragment.class));
+        actionbar.addTab(recommendationTab);
+
+        // [END Citation]
+
         // Lets check if were dealing with a new user
         SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
         Boolean newbie = prefs.getBoolean("newUser", true);
@@ -97,13 +128,13 @@ public class MainActivity extends Activity {
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
-                mTitle = getString(R.string.title_section1);
+                mTitle = getString(R.string.title_messages);
                 break;
             case 2:
-                mTitle = getString(R.string.title_section2);
+                mTitle = getString(R.string.title_places);
                 break;
             case 3:
-                mTitle = getString(R.string.title_section3);
+                mTitle = getString(R.string.title_recommendation);
                 break;
         }
     }
