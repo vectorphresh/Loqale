@@ -129,6 +129,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
         String username = mDisplayNameView.getText().toString();
+        log.info("username[" + username + "]");
         boolean cancel = false;
         View focusView = null;
 
@@ -140,7 +141,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
             cancel = true;
         }
 
-        if (!TextUtils.isEmpty(username)){
+        if (TextUtils.isEmpty(username)){
             mDisplayNameView.setError(getString(R.string.error_field_required));
             focusView = mDisplayNameView;
             cancel = true;

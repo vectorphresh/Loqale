@@ -66,16 +66,16 @@ public class MainActivity extends Activity {
         SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
         Boolean newbie = prefs.getBoolean("newUser", true);
         String userDevice = prefs.getString("deviceId", "");
-        if(newbie){
+        String userName = prefs.getString("username", "Anon Loqal");
+        int proximity = prefs.getInt("proximity", 1000);
+
+            if(newbie){
             // add welcome message to main display
             //
             //
             // push the users default credentials to the server
             User newbieUser = new User();
-            if(!userDevice.isEmpty()) {
-                newbieUser.setUserId(userDevice);
 
-            }
 
         }
         else {
