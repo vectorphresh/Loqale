@@ -1,19 +1,16 @@
 package nfiniteloop.net.loqale;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,12 +24,16 @@ import net.nfiniteloop.loqale.backend.checkins.model.User;
 import net.nfiniteloop.loqale.backend.places.Places;
 import net.nfiniteloop.loqale.backend.places.model.Place;
 import net.nfiniteloop.loqale.backend.recommendations.Recommendations;
+import net.nfiniteloop.loqale.backend.registration.Registration;
+import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecord;
+import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecordCollection;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener{
     // Logging for debugging
     private Logger log = Logger.getLogger(MainActivity.class.getName());
 
@@ -57,6 +58,7 @@ public class MainActivity extends Activity {
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    Registration registrationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,25 +77,28 @@ public class MainActivity extends Activity {
         // tabs.
         ActionBar.Tab feedTab = actionbar.newTab()
                 .setText(R.string.title_messages)
-                .setTabListener(new TabListener<LoqaleFragment> (
-                        this, "feed", LoqaleFragment.class));
+                .setTabListener(new TabListener<MessageFragment> (
+                        this, "feed", MessageFragment.class));
         actionbar.addTab(feedTab);
 
         ActionBar.Tab placesTab = actionbar.newTab()
                 .setText(R.string.title_places)
-                .setTabListener(new TabListener<LoqaleFragment> (
-                        this, "places", LoqaleFragment.class));
+                .setTabListener(new TabListener<PlaceFragment> (
+                        this, "places", PlaceFragment.class));
         actionbar.addTab(placesTab);
-
+        /*
         ActionBar.Tab recommendationTab = actionbar.newTab()
                 .setText(R.string.title_recommendation)
                 .setTabListener(new TabListener<LoqaleFragment> (
                         this, "recommendation", LoqaleFragment.class));
         actionbar.addTab(recommendationTab);
-
+        */
         // [END Citation]
+        //actionbar.addTab(actionbar.newTab().setText(R.string.title_messages).setTabListener(this));
+        //actionbar.addTab(actionbar.newTab().setText(R.string.title_places).setTabListener(this));
+        //actionbar.addTab(actionbar.newTab().setText(R.string.title_recommendation).setTabListener(this));
+        //  Lets check if were dealing with a new user
 
-        // Lets check if were dealing with a new user
         SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
         Boolean newbie = prefs.getBoolean("newUser", true);
         String userDevice = prefs.getString("deviceId", "");
@@ -126,17 +131,7 @@ public class MainActivity extends Activity {
     }
 
     public void onSectionAttached(int number) {
-        switch (number) {
-            case 1:
-                mTitle = getString(R.string.title_messages);
-                break;
-            case 2:
-                mTitle = getString(R.string.title_places);
-                break;
-            case 3:
-                mTitle = getString(R.string.title_recommendation);
-                break;
-        }
+
     }
 
     public void restoreActionBar() {
@@ -156,6 +151,7 @@ public class MainActivity extends Activity {
         if (id == R.id.action_settings) {
             showSettingsActivity();
         }
+        log.severe("804");
         return super.onOptionsItemSelected(item);
     }
 
@@ -165,51 +161,32 @@ public class MainActivity extends Activity {
         startActivity(intent);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        // get the selected tab
+        log.severe("test");
+        feedTask = new LoqaleFeedGetter();
+        feedTask.execute((Void) null);
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
+    }
 
-        public PlaceholderFragment() {
-        }
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            return rootView;
-        }
+    }
 
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
-        }
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        log.severe("test");
+
     }
 
     public class LoqaleFeedGetter extends AsyncTask<Void, Void, Boolean> {
 
+        List<RegistrationRecord> foo = new ArrayList<RegistrationRecord>();
+        MessageItem bar;
         @Override
         protected Boolean doInBackground(Void... params) {
-            /*
             if (registrationService == null) { // Only do this once
                 Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
@@ -223,16 +200,33 @@ public class MainActivity extends Activity {
                                 abstractGoogleClientRequest.setDisableGZipContent(true);
                             }
                         });
+                log.info("Do I get here?");
                 // end options for devappserver
                 registrationService = builder.build();
             }
-            */
+            try {
+                RegistrationRecordCollection ugh = registrationService.listDevices(1).execute();
+                foo.addAll(ugh.getItems());
+
+                if(!foo.isEmpty()) {
+                    bar.message = foo.get(0).getRegId();
+                    bar.username= "Mitch";
+                    int imgR = R.drawable.ic_local_bar_black_36dp;
+                    bar.pic = getResources().getDrawable(imgR);
+                    log.info("device"+ foo.get(0).getRegId());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return true;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
-
+            if(success){
+                //getActionBar().getSelectedTab().getCustomView().
+            }
         }
 
         @Override

@@ -8,18 +8,21 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by vaek on 12/1/14.
  */
-public class FeedAdapter extends ArrayAdapter<FeedRowItem> {
+public class MessageAdapter extends ArrayAdapter<MessageItem> {
 
     Context context;
-    List<FeedRowItem> rowItem;
+    List<MessageItem> rowItem;
 
-    FeedAdapter(Context context, List<FeedRowItem> rowItem) {
-        super(context,R.layout.loqale_feed, rowItem);
+    MessageAdapter(Context context, List<MessageItem> rowItem) {
+        super(context,R.layout.loqale_messages, rowItem);
+        this.rowItem = new ArrayList<MessageItem>();
+        this.rowItem.addAll(rowItem);
     }
 
     @Override
@@ -39,14 +42,14 @@ public class FeedAdapter extends ArrayAdapter<FeedRowItem> {
 
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.loqale_feed, null);
+            convertView = inflater.inflate(R.layout.loqale_messages, null);
         }
 
         ImageView picIcon = (ImageView) convertView.findViewById(R.id.list_pic);
         TextView txtUsername = (TextView) convertView.findViewById(R.id.list_username);
         TextView txtMsg = (TextView) convertView.findViewById(R.id.list_msg);
 
-        FeedRowItem item = getItem(position);
+        MessageItem item = getItem(position);
         picIcon.setImageDrawable(item.pic);
         txtUsername.setText(item.username);
         txtMsg.setText(item.message);

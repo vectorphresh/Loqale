@@ -3,12 +3,13 @@ package net.nfiniteloop.loqale.backend;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
-import com.google.api.server.spi.response.CollectionResponse;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
+
 import javax.inject.Named;
-import javax.jws.soap.SOAPBinding;
 
 import static net.nfiniteloop.loqale.backend.OfyService.ofy;
 
@@ -68,9 +69,12 @@ public class RegistrationEndpoint {
      * @return a list of Google Cloud Messaging registration Ids
      */
     @ApiMethod(name = "listDevices")
-    public CollectionResponse<RegistrationRecord> listDevices(@Named("count") int count) {
+    public Collection<RegistrationRecord> listDevices(@Named("count") int count) {
         List<RegistrationRecord> records = ofy().load().type(RegistrationRecord.class).limit(count).list();
-        return CollectionResponse.<RegistrationRecord>builder().setItems(records).build();
+        Collection<RegistrationRecord> col = new LinkedList<RegistrationRecord>();
+        col.addAll(records);
+        //return CollectionResponse.<RegistrationRecord>builder().setItems(records).build();
+        return col;
     }
 
     private RegistrationRecord findRecord(String regId) {

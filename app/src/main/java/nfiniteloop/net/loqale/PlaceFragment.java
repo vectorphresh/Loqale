@@ -10,23 +10,23 @@ import java.util.List;
  * A fragment representing a list of Items.
  * no listener, since were just displaying static items
  */
-public class LoqaleFragment extends ListFragment {
+public class PlaceFragment extends ListFragment {
 
-    FeedAdapter adapter;
-    private List<FeedRowItem> items;
+    MessageAdapter adapter;
+    private List<PlaceItem> items;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public LoqaleFragment() {
+    public PlaceFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        items = new ArrayList<FeedRowItem>();
+        items = new ArrayList<PlaceItem>();
 
         // TODO: Change Adapter to display your content
         // will use populate to push items from Main Activity, once I know class name...

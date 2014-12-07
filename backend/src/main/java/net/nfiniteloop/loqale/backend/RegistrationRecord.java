@@ -4,12 +4,14 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+import java.io.Serializable;
+
 /** The Objectify object model for device registrations we are persisting */
 @Entity
-public class RegistrationRecord {
+public class RegistrationRecord implements Serializable{
 
     @Id
-    Long id;
+    private Long id;
 
     @Index
     private String regId;
