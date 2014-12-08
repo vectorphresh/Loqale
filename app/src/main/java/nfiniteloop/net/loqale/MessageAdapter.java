@@ -45,10 +45,9 @@ public class MessageAdapter extends ArrayAdapter<MessageItem> {
         }
 
         MessageItem item = getItem(position);
-
-        ((ImageView) convertView.findViewById(R.id.list_pic)).setImageDrawable(item.pic);
-        ((TextView) convertView.findViewById(R.id.list_username)).setText(item.username); ;
-        ((TextView) convertView.findViewById(R.id.list_msg)).setText(item.message);
+        ((ImageView) convertView.findViewById(R.id.list_pic)).setImageDrawable(item.getPicture());
+        ((TextView) convertView.findViewById(R.id.list_username)).setText(item.getUsername());
+        ((TextView) convertView.findViewById(R.id.list_msg)).setText(item.getMessage());
         return convertView;
 
     }

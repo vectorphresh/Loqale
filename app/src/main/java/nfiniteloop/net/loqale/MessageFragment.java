@@ -1,19 +1,41 @@
 package nfiniteloop.net.loqale;
 
+import android.app.Activity;
 import android.app.ListFragment;
+import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+
+import net.nfiniteloop.loqale.backend.registration.Registration;
+import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecord;
+import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecordCollection;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A fragment representing a list of Items.
  * no listener, since were just displaying static items
  */
-public class MessageFragment extends ListFragment {
-
-    MessageAdapter adapter;
-    private List<MessageItem> items;
+public class MessageFragment extends Fragment {
+    private Logger log = Logger.getLogger(MessageFragment.class.getName());
+    private MessageAdapter adapter;
+    private ArrayList<MessageItem> items;
+    private ListView messageList;
+    Registration registrationService;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -22,19 +44,94 @@ public class MessageFragment extends ListFragment {
     public MessageFragment() {
     }
 
+    public static final MessageFragment msgFragment(ArrayList<MessageItem> messages) {
+        MessageFragment mf = new MessageFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList("messages", messages );
+        mf.setArguments(bundle);
+
+        return mf;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        items = new ArrayList<MessageItem>();
+        //items.add((MessageItem) savedInstanceState.getParcelableArrayList("messages").get(0));
+        MessageGetterTask mg = new MessageGetterTask();
+        mg.execute();
 
-        // TODO: Change Adapter to display your content
-        setListAdapter(new MessageAdapter(getActivity(), items));
-        
-        // will use populate to push items from Main Activity, once I know class name...
-    }
-
-    public void populateList() {
 
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // select an layout to inflate
+        View view = inflater.inflate(R.layout.loqale_messages,container,false);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        messageList = (ListView) view.findViewById(R.id.list);
+        MessageGetterTask mg = new MessageGetterTask();
+        mg.execute();
+
+    }
+
+    public class MessageGetterTask extends AsyncTask<Void, Void, ArrayList<MessageItem> > {
+
+        List<RegistrationRecord> foo = new ArrayList<RegistrationRecord>();
+        ArrayList<MessageItem> bar = new ArrayList<MessageItem>();
+
+        @Override
+        protected ArrayList<MessageItem> doInBackground(Void... params) {
+            if (registrationService == null) { // Only do this once
+                Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null)
+                        // options for running against local devappserver
+                        // - 10.0.2.2 is localhost's IP address in Android emulator
+                        // - turn off compression when running against local devappserver
+                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                            @Override
+                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                abstractGoogleClientRequest.setDisableGZipContent(true);
+                            }
+                        });
+                log.info("Do I get here?");
+                // end options for devappserver
+                registrationService = builder.build();
+            }
+            try {
+                RegistrationRecordCollection ugh = registrationService.listDevices(1).execute();
+                foo.addAll(ugh.getItems());
+
+                if(!foo.isEmpty()) {
+                    MessageItem mi = new MessageItem();
+
+                    mi.setMessage(foo.get(0).getRegId());
+                    mi.setUsername("Mitch");
+                    int drawableId = R.drawable.ic_person_black_36dp;
+                    mi.setPicture(getResources().getDrawable(drawableId));
+                    bar.add(mi);
+                    log.info("device"+ foo.get(0).getRegId());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return bar;
+        }
+
+        @Override
+        protected void onPostExecute(final ArrayList<MessageItem> result) {
+            adapter = new MessageAdapter(getActivity(), result);
+            messageList.setAdapter(adapter);
+
+        }
+    }
+
 }

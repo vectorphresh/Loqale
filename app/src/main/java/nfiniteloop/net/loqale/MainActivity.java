@@ -1,13 +1,14 @@
 package nfiniteloop.net.loqale;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.ListFragment;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -33,71 +34,41 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener{
+public class MainActivity extends FragmentActivity{
     // Logging for debugging
     private Logger log = Logger.getLogger(MainActivity.class.getName());
+    LoqalePageAdapter pageAdapter;
+    ViewPager pager;
 
     // asynchronous support classes
-    private static LoqaleFeedGetter feedTask;
+    // TODO: Move all to respective fragments
     private static RecommendationGetter recommendationTask;
     private static placeGetter placesTask;
     private static checkInHelper checkInsTask;
 
     // endpoint client services
-    private static Checkins checkInService;
+        private static Checkins checkInService;
     private static Places placesService;
     private static Recommendations recommendationService;
 
     //container class for places fragment
-    private TextView placesView;
-    private ListView placesList;
-    private List<Place> places = null;
+    private ArrayList<Place> places;
+    private ArrayList<MessageItem> messages;
 
 
-    /**
-     * Used to store the last screen title. For use in {@link #restoreActionBar()}.
-     */
-    private CharSequence mTitle;
     Registration registrationService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
-        // First we'll set up our actionbar and layout elements
-        ActionBar actionbar = getActionBar();
-        actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        List<Fragment> fragments = getFragments();
+        messages = new ArrayList<MessageItem>();
+        pager = (ViewPager)findViewById(R.id.viewpager);
+        pageAdapter = new LoqalePageAdapter(getSupportFragmentManager(), fragments);
+        pager.setAdapter(pageAdapter);
 
-        // [BEGIN Source Citation] From Google Android Documentation
-        // https://developer.android.com/guide/topics/ui/actionbar.html
-        // TODO: Add the remaining fragments
-        // I'm going to be lazy I think and implement a places fragment that I can overload for
-        // the recommendation tab. I will hide the like(heart) button on the recommendations tab.
-        // 12/01/14: Yep Laziness wins! We'll extend the current fragment/adapter to support all
-        // tabs.
-        ActionBar.Tab feedTab = actionbar.newTab()
-                .setText(R.string.title_messages)
-                .setTabListener(new TabListener<MessageFragment> (
-                        this, "feed", MessageFragment.class));
-        actionbar.addTab(feedTab);
-
-        ActionBar.Tab placesTab = actionbar.newTab()
-                .setText(R.string.title_places)
-                .setTabListener(new TabListener<PlaceFragment> (
-                        this, "places", PlaceFragment.class));
-        actionbar.addTab(placesTab);
-        /*
-        ActionBar.Tab recommendationTab = actionbar.newTab()
-                .setText(R.string.title_recommendation)
-                .setTabListener(new TabListener<LoqaleFragment> (
-                        this, "recommendation", LoqaleFragment.class));
-        actionbar.addTab(recommendationTab);
-        */
-        // [END Citation]
-        //actionbar.addTab(actionbar.newTab().setText(R.string.title_messages).setTabListener(this));
-        //actionbar.addTab(actionbar.newTab().setText(R.string.title_places).setTabListener(this));
-        //actionbar.addTab(actionbar.newTab().setText(R.string.title_recommendation).setTabListener(this));
-        //  Lets check if were dealing with a new user
 
         SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
         Boolean newbie = prefs.getBoolean("newUser", true);
@@ -118,7 +89,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         }
 
-        mTitle = getTitle();
         log.severe("8041");
 
     }
@@ -134,12 +104,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     }
 
-    public void restoreActionBar() {
-        ActionBar actionBar = getActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setDisplayShowTitleEnabled(true);
-        actionBar.setTitle(mTitle);
-    }
 
 
     @Override
@@ -161,81 +125,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         startActivity(intent);
     }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // get the selected tab
-        log.severe("test");
-        feedTask = new LoqaleFeedGetter();
-        feedTask.execute((Void) null);
-
+    private List<Fragment> getFragments() {
+        List<Fragment> listFragments = new ArrayList<Fragment>();
+        listFragments.add((MessageFragment.msgFragment(messages)));
+        return listFragments;
     }
 
-    @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
 
-    }
-
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        log.severe("test");
-
-    }
-
-    public class LoqaleFeedGetter extends AsyncTask<Void, Void, Boolean> {
-
-        List<RegistrationRecord> foo = new ArrayList<RegistrationRecord>();
-        MessageItem bar;
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            if (registrationService == null) { // Only do this once
-                Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        // options for running against local devappserver
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
-                        // - turn off compression when running against local devappserver
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
-                log.info("Do I get here?");
-                // end options for devappserver
-                registrationService = builder.build();
-            }
-            try {
-                RegistrationRecordCollection ugh = registrationService.listDevices(1).execute();
-                foo.addAll(ugh.getItems());
-
-                if(!foo.isEmpty()) {
-                    bar.message = foo.get(0).getRegId();
-                    bar.username= "Mitch";
-                    int imgR = R.drawable.ic_local_bar_black_36dp;
-                    bar.pic = getResources().getDrawable(imgR);
-                    log.info("device"+ foo.get(0).getRegId());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            if(success){
-                //MessageFragment mf = (MessageFragment) getFragmentManager().findFragmentByTag("feed");
-                //mf.adapter.add(bar);
-
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
 
     public class placeGetter extends AsyncTask<Void, Void, Boolean> {
 
