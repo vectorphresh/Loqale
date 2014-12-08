@@ -105,8 +105,8 @@ public class MessageFragment extends ListFragment {
 
                     mi.setMessage(foo.get(0).getRegId());
                     mi.setUsername("Mitch");
-                    int drawableId = R.drawable.ic_person_black_36dp;
-                    mi.setPicture(getResources().getDrawable(drawableId));
+                    //int drawableId = R.drawable.ic_person_black_36dp;
+                    mi.setPicture(R.drawable.ic_person_black_36dp);
                     bar.add(mi);
                     log.info("device"+ foo.get(0).getRegId());
                 }

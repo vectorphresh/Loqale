@@ -6,6 +6,8 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.CollectionResponse;
 import com.google.appengine.api.datastore.GeoPt;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -16,28 +18,35 @@ import javax.inject.Named;
  */
 @Api(name = "places", version = "v1", namespace = @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net", ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
 public class PlaceEndpoint {
-    private static final Logger log = Logger.getLogger(RegistrationEndpoint.class.getName());
+    private static final Logger log = Logger.getLogger(PlaceEndpoint.class.getName());
 
     /**
      * Return a collection of registered devices
      *
      * @param count The number of devices to list
+     * @param userLongitude The coordinate of user device
+     * @param userLatitude  The coordinate of user deivce
+     * @param radiusInMeters Proximity to search
      * @return a list of Google Cloud Messaging registration Ids
      */
-    @ApiMethod(name = "listDevices")
-    public CollectionResponse<Place> listPlaces(@Named("count") int count,
-            @Named("longitude") String longStr, @Named("latitude") String latStr,
-            @Named("range") String radiusInMiles) {
+    @ApiMethod(name = "listPlaces")
+    public Collection<Place> listPlaces(@Named("count") int count,
+            @Named("longitude") Double userLongitude, @Named("latitude") Double userLatitude,
+            @Named("range") Double radiusInMeters) {
 
         // Convert Strings into floats
         float longitude, latitude;
-        Double proximity;
-        longitude = Float.parseFloat(longStr);
-        latitude = Float.parseFloat(latStr);
+        longitude = userLongitude.floatValue();
+        latitude = userLatitude.floatValue();
         GeoPt location = new GeoPt(latitude, longitude);
-        proximity = Double.parseDouble(radiusInMiles);
 
-        List<Place> places = PlaceUtil.getPlacesByProximity(location,proximity,count);
-        return CollectionResponse.<Place>builder().setItems(places).build();
+        List<Place> places = PlaceUtil.getPlacesByProximity(location,radiusInMeters,count);
+        for(Iterator<Place> iter = places.iterator(); iter.hasNext();) {
+            Place p = iter.next();
+            GeoPt placeLocation = new GeoPt(p.getLatitude().floatValue(), p.getLongitude().floatValue());
+            p.setDistance(PlaceUtil.getDistanceInMeters(location,placeLocation));
+        }
+        return places;
+        //return CollectionResponse.<Place>builder().setItems(places).build();
     }
 }

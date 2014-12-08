@@ -19,6 +19,7 @@ public class Place {
     private Double longitude;
     private Double latitude;
     private String category;
+    private Double distance;
 
     @Serialize
     private double[][] qualityMatrix;
@@ -77,5 +78,13 @@ public class Place {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
+    public Double getDistance() {
+        return distance;
     }
 }

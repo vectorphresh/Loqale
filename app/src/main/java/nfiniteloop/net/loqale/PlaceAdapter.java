@@ -1,6 +1,7 @@
 package nfiniteloop.net.loqale;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,14 +46,12 @@ public class PlaceAdapter extends ArrayAdapter<PlaceItem> {
             convertView = inflater.inflate(R.layout.loqale_places, null);
         }
 
-        ImageView picCategoryIcon = (ImageView) convertView.findViewById(R.id.pic_place_category);
-        TextView txtPlaceName = (TextView) convertView.findViewById(R.id.place_name);
-        TextView txtPlaceDistance = (TextView) convertView.findViewById(R.id.place_distance);
 
         PlaceItem item = getItem(position);
-        picCategoryIcon.setImageDrawable(item.picCategory);
-        txtPlaceName.setText(item.placeName);
-        txtPlaceDistance.setText(item.placeDistance);
+        ((ImageView) convertView.findViewById(R.id.pic_place_category))
+                .setImageDrawable(Resources.getSystem().getDrawable(item.getPicCategory()));
+        ((TextView) convertView.findViewById(R.id.place_name)).setText(item.getPlaceName());
+        ((TextView) convertView.findViewById(R.id.place_distance)).setText(item.getDistance().toString());
 
         return convertView;
 

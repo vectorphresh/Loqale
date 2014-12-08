@@ -1,6 +1,7 @@
 package nfiniteloop.net.loqale;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,7 +46,8 @@ public class MessageAdapter extends ArrayAdapter<MessageItem> {
         }
 
         MessageItem item = getItem(position);
-        ((ImageView) convertView.findViewById(R.id.list_pic)).setImageDrawable(item.getPicture());
+        ((ImageView) convertView.findViewById(R.id.list_pic)).setImageDrawable(Resources.getSystem()
+                .getDrawable(item.getPicture()));
         ((TextView) convertView.findViewById(R.id.list_username)).setText(item.getUsername());
         ((TextView) convertView.findViewById(R.id.list_msg)).setText(item.getMessage());
         return convertView;

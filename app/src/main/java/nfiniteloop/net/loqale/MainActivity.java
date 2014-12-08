@@ -7,13 +7,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.ListFragment;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -26,8 +23,6 @@ import net.nfiniteloop.loqale.backend.places.Places;
 import net.nfiniteloop.loqale.backend.places.model.Place;
 import net.nfiniteloop.loqale.backend.recommendations.Recommendations;
 import net.nfiniteloop.loqale.backend.registration.Registration;
-import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecord;
-import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecordCollection;
 
 import java.io.IOException;
 import java.util.ArrayList;

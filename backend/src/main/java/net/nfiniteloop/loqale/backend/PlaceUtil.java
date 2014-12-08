@@ -2,14 +2,20 @@ package net.nfiniteloop.loqale.backend;
 
 import com.google.appengine.api.datastore.GeoPt;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import static net.nfiniteloop.loqale.backend.OfyService.ofy;
 /**
  * Created by vaek on 12/1/14.
  */
+
+
 public class PlaceUtil {
     final static int radiusEarthMeters = 6378137;
+
     public static List<Place> getPlacesByProximity(GeoPt origin, Double proximityMeters, int count){
         List<Place> places = new LinkedList<Place>();
         double deltaLat = (float) proximityMeters.doubleValue() / radiusEarthMeters;
@@ -27,7 +33,7 @@ public class PlaceUtil {
         return places;
     }
 
-    public double getDistanceInMeters(GeoPt location1, GeoPt location2){
+    public static double getDistanceInMeters(GeoPt location1, GeoPt location2){
 
         // derived from haversine
         double radiusEarth = 6378137; // meters
@@ -45,4 +51,6 @@ public class PlaceUtil {
 
         return distance;
     }
+
+
 }

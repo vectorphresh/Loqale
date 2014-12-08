@@ -8,13 +8,13 @@ import android.os.Parcelable;
  * Created by vaek on 12/1/14.
  */
 public class MessageItem implements Parcelable {
-    private Drawable picture;
+    private int picture;
     private String username;
     private String message;
 
     public MessageItem() {}
 
-    public MessageItem(String username, String message, Drawable picture) {
+    public MessageItem(String username, String message, int picture) {
         this.picture = picture;
         this.username = username;
         this.message = message;
@@ -27,6 +27,7 @@ public class MessageItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(picture);
         parcel.writeString(username);
         parcel.writeString(message);
 
@@ -48,13 +49,14 @@ public class MessageItem implements Parcelable {
         return message;
     }
 
-    public Drawable getPicture() {
+    public int getPicture() {
         return picture;
     }
 
-    public void setPicture(Drawable picture) {
+    public void setPicture(int picture) {
         this.picture = picture;
     }
+
 }
 
 
