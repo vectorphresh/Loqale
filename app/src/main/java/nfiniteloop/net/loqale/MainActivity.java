@@ -119,7 +119,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
 
         mTitle = getTitle();
-
+        log.severe("8041");
 
     }
     @Override
@@ -225,7 +225,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         protected void onPostExecute(final Boolean success) {
             if(success){
-                //getActionBar().getSelectedTab().getCustomView().
+                //MessageFragment mf = (MessageFragment) getFragmentManager().findFragmentByTag("feed");
+                //mf.adapter.add(bar);
+
             }
         }
 

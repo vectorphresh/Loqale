@@ -29,6 +29,8 @@ public class MessageFragment extends ListFragment {
         items = new ArrayList<MessageItem>();
 
         // TODO: Change Adapter to display your content
+        setListAdapter(new MessageAdapter(getActivity(), items));
+        
         // will use populate to push items from Main Activity, once I know class name...
     }
 

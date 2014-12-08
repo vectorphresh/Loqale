@@ -39,21 +39,16 @@ public class MessageAdapter extends ArrayAdapter<MessageItem> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
         if (convertView == null) {
             LayoutInflater inflater = LayoutInflater.from(getContext());
             convertView = inflater.inflate(R.layout.loqale_messages, null);
         }
 
-        ImageView picIcon = (ImageView) convertView.findViewById(R.id.list_pic);
-        TextView txtUsername = (TextView) convertView.findViewById(R.id.list_username);
-        TextView txtMsg = (TextView) convertView.findViewById(R.id.list_msg);
-
         MessageItem item = getItem(position);
-        picIcon.setImageDrawable(item.pic);
-        txtUsername.setText(item.username);
-        txtMsg.setText(item.message);
 
+        ((ImageView) convertView.findViewById(R.id.list_pic)).setImageDrawable(item.pic);
+        ((TextView) convertView.findViewById(R.id.list_username)).setText(item.username); ;
+        ((TextView) convertView.findViewById(R.id.list_msg)).setText(item.message);
         return convertView;
 
     }

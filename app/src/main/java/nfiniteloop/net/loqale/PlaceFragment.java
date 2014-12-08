@@ -29,7 +29,7 @@ public class PlaceFragment extends ListFragment {
         items = new ArrayList<PlaceItem>();
 
         // TODO: Change Adapter to display your content
-        // will use populate to push items from Main Activity, once I know class name...
+        setListAdapter(new PlaceAdapter(getActivity(), items));
     }
 
     public void populateList() {
