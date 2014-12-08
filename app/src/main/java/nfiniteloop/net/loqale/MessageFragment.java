@@ -1,12 +1,12 @@
 package nfiniteloop.net.loqale;
 
 import android.app.Activity;
-import android.app.ListFragment;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +22,7 @@ import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecord;
 import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecordCollection;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -30,24 +31,17 @@ import java.util.logging.Logger;
  * A fragment representing a list of Items.
  * no listener, since were just displaying static items
  */
-public class MessageFragment extends Fragment {
+public class MessageFragment extends ListFragment {
     private Logger log = Logger.getLogger(MessageFragment.class.getName());
     private MessageAdapter adapter;
-    private ArrayList<MessageItem> items;
-    private ListView messageList;
     Registration registrationService;
+    private WeakReference<MessageGetterTask> asyncTaskWeakRef;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public MessageFragment() {
-    }
 
-    public static final MessageFragment msgFragment(ArrayList<MessageItem> messages) {
+    public static MessageFragment newInstance(ArrayList<MessageItem> items) {
         MessageFragment mf = new MessageFragment();
         Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList("messages", messages );
+        bundle.putParcelableArrayList("items", items);
         mf.setArguments(bundle);
 
         return mf;
@@ -56,9 +50,10 @@ public class MessageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //items.add((MessageItem) savedInstanceState.getParcelableArrayList("messages").get(0));
-        MessageGetterTask mg = new MessageGetterTask();
+        setRetainInstance(true);
+        MessageGetterTask mg = new MessageGetterTask(this);
+        this.asyncTaskWeakRef = new WeakReference<MessageGetterTask>(mg);
         mg.execute();
 
 
@@ -72,19 +67,15 @@ public class MessageFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        messageList = (ListView) view.findViewById(R.id.list);
-        MessageGetterTask mg = new MessageGetterTask();
-        mg.execute();
-
-    }
-
     public class MessageGetterTask extends AsyncTask<Void, Void, ArrayList<MessageItem> > {
 
         List<RegistrationRecord> foo = new ArrayList<RegistrationRecord>();
         ArrayList<MessageItem> bar = new ArrayList<MessageItem>();
+        private WeakReference<MessageFragment> fragmentWeakRef;
+
+        private MessageGetterTask (MessageFragment fragment) {
+            this.fragmentWeakRef = new WeakReference<MessageFragment>(fragment);
+        }
 
         @Override
         protected ArrayList<MessageItem> doInBackground(Void... params) {
@@ -128,8 +119,10 @@ public class MessageFragment extends Fragment {
 
         @Override
         protected void onPostExecute(final ArrayList<MessageItem> result) {
-            adapter = new MessageAdapter(getActivity(), result);
-            messageList.setAdapter(adapter);
+            if (this.fragmentWeakRef.get() != null) {
+                adapter = new MessageAdapter(getActivity(), result);
+                setListAdapter(adapter);
+            }
 
         }
     }

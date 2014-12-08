@@ -66,7 +66,7 @@ public class MainActivity extends FragmentActivity{
         List<Fragment> fragments = getFragments();
         messages = new ArrayList<MessageItem>();
         pager = (ViewPager)findViewById(R.id.viewpager);
-        pageAdapter = new LoqalePageAdapter(getSupportFragmentManager(), fragments);
+        pageAdapter = new LoqalePageAdapter(getApplicationContext(),getSupportFragmentManager(), fragments);
         pager.setAdapter(pageAdapter);
 
 
@@ -127,7 +127,7 @@ public class MainActivity extends FragmentActivity{
 
     private List<Fragment> getFragments() {
         List<Fragment> listFragments = new ArrayList<Fragment>();
-        listFragments.add((MessageFragment.msgFragment(messages)));
+        listFragments.add((MessageFragment.newInstance(messages)));
         return listFragments;
     }
 

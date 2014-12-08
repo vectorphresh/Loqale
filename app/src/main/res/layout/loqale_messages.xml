@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
-    <TableRow>
-        <ImageView
-            android:id="@+id/list_pic"
-            android:layout_width="50dp"
-            android:layout_height="50dp"/>
-        <TextView
-            android:id="@+id/list_username"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"/>
-        <TextView
-            android:id="@+id/list_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"/>
-    </TableRow>
-</TableLayout>
+    <ImageView
+        android:id="@+id/list_pic"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"/>
+    <TextView
+        android:id="@+id/list_username"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/list_pic"/>
+    <TextView
+        android:id="@+id/list_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/list_pic"/>
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </ListView>
+</RelativeLayout>
