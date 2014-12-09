@@ -37,8 +37,6 @@ public class MainActivity extends FragmentActivity{
 
     // asynchronous support classes
     // TODO: Move all to respective fragments
-    private static RecommendationGetter recommendationTask;
-    private static placeGetter placesTask;
     private static checkInHelper checkInsTask;
 
     // endpoint client services
@@ -47,8 +45,8 @@ public class MainActivity extends FragmentActivity{
     private static Recommendations recommendationService;
 
     //container class for places fragment
-    private ArrayList<Place> places;
     private ArrayList<MessageItem> messages;
+    private ArrayList<PlaceItem> places;
 
 
     Registration registrationService;
@@ -60,6 +58,8 @@ public class MainActivity extends FragmentActivity{
         setContentView(R.layout.activity_main);
         List<Fragment> fragments = getFragments();
         messages = new ArrayList<MessageItem>();
+        places = new ArrayList<PlaceItem>();
+
         pager = (ViewPager)findViewById(R.id.viewpager);
         pageAdapter = new LoqalePageAdapter(getApplicationContext(),getSupportFragmentManager(), fragments);
         pager.setAdapter(pageAdapter);
@@ -71,20 +71,6 @@ public class MainActivity extends FragmentActivity{
         String userName = prefs.getString("username", "Anon Loqal");
         int proximity = prefs.getInt("proximity", 1000);
 
-            if(newbie){
-            // add welcome message to main display
-            //
-            //
-            // push the users default credentials to the server
-            User newbieUser = new User();
-
-
-        }
-        else {
-
-        }
-
-        log.severe("8041");
 
     }
     @Override
@@ -123,43 +109,8 @@ public class MainActivity extends FragmentActivity{
     private List<Fragment> getFragments() {
         List<Fragment> listFragments = new ArrayList<Fragment>();
         listFragments.add((MessageFragment.newInstance(messages)));
+        //listFragments.add(PlaceFragment.newInstance(places));
         return listFragments;
-    }
-
-
-
-    public class placeGetter extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-
-            if (placesService == null) { // Only do this once
-                Places.Builder builder = new Places.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        // options for running against local devappserver
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
-                        // - turn off compression when running against local devappserver
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
-                placesService = builder.build();
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
     }
 
     public class checkInHelper extends AsyncTask<Void, Void, Boolean> {
@@ -194,39 +145,5 @@ public class MainActivity extends FragmentActivity{
 
         }
     }
-
-    public class RecommendationGetter extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            if (recommendationService == null) { // Only do this once
-                Recommendations.Builder builder = new Recommendations.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        // options for running against local devappserver
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
-                        // - turn off compression when running against local devappserver
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
-                recommendationService = builder.build();
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
-    }
-
 
 }
