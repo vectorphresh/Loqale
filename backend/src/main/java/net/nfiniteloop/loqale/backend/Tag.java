@@ -17,6 +17,7 @@ public class Tag {
     @Id
     private Long id;
     @Index
+    int tagCategory;
     private String tagId;
     private GeoPt location;
     private String text;
@@ -61,6 +62,14 @@ public class Tag {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public void setTagCategory(int tagCategory) {
+        this.tagCategory = tagCategory;
+    }
+
+    public int getTagCategory() {
+        return tagCategory;
     }
 }
 

@@ -33,6 +33,8 @@ public class PlaceEndpoint {
     public Collection<Place> listPlaces(@Named("count") int count,
             @Named("longitude") Double userLongitude, @Named("latitude") Double userLatitude,
             @Named("range") Double radiusInMeters) {
+        DataInjector injector = new DataInjector();
+        injector.createDataSet();
 
         // Convert Strings into floats
         float longitude, latitude;
@@ -41,11 +43,8 @@ public class PlaceEndpoint {
         GeoPt location = new GeoPt(latitude, longitude);
 
         List<Place> places = PlaceUtil.getPlacesByProximity(location,radiusInMeters,count);
-        for(Iterator<Place> iter = places.iterator(); iter.hasNext();) {
-            Place p = iter.next();
-            GeoPt placeLocation = new GeoPt(p.getLatitude().floatValue(), p.getLongitude().floatValue());
-            p.setDistance(PlaceUtil.getDistanceInMeters(location,placeLocation));
-        }
+        log.info(places.size() + " places returned ");
+
         return places;
         //return CollectionResponse.<Place>builder().setItems(places).build();
     }

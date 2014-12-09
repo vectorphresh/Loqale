@@ -1,5 +1,7 @@
 package nfiniteloop.net.loqale;
 
+import android.app.ActionBar;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class MainActivity extends FragmentActivity{
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener{
     // Logging for debugging
     private Logger log = Logger.getLogger(MainActivity.class.getName());
     LoqalePageAdapter pageAdapter;
@@ -37,10 +39,9 @@ public class MainActivity extends FragmentActivity{
 
     // asynchronous support classes
     // TODO: Move all to respective fragments
-    private static checkInHelper checkInsTask;
 
     // endpoint client services
-        private static Checkins checkInService;
+    private static Checkins checkInService;
     private static Places placesService;
     private static Recommendations recommendationService;
 
@@ -56,14 +57,22 @@ public class MainActivity extends FragmentActivity{
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        List<Fragment> fragments = getFragments();
+        //List<Fragment> fragments = getFragments();
         messages = new ArrayList<MessageItem>();
         places = new ArrayList<PlaceItem>();
 
-        pager = (ViewPager)findViewById(R.id.viewpager);
-        pageAdapter = new LoqalePageAdapter(getApplicationContext(),getSupportFragmentManager(), fragments);
-        pager.setAdapter(pageAdapter);
+       // pager = new ViewPager(this);
+       // pager.setId(R.id.viewpager);
+        //pageAdapter = new LoqalePageAdapter(getApplicationContext(),getSupportFragmentManager(), fragments);
+        //pager.setAdapter(pageAdapter);
+        final ActionBar actionbar = getActionBar();
+        actionbar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+        // [END Citation]
+        actionbar.addTab(actionbar.newTab().setText(R.string.title_messages).setTabListener(this));
+        actionbar.addTab(actionbar.newTab().setText(R.string.title_places).setTabListener(this));
+        //actionbar.addTab(actionbar.newTab().setText(R.string.title_recommendation).setTabListener(this));
+        //  Lets check if were dealing with a new user
 
         SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
         Boolean newbie = prefs.getBoolean("newUser", true);
@@ -86,7 +95,6 @@ public class MainActivity extends FragmentActivity{
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -96,7 +104,6 @@ public class MainActivity extends FragmentActivity{
         if (id == R.id.action_settings) {
             showSettingsActivity();
         }
-        log.severe("804");
         return super.onOptionsItemSelected(item);
     }
 
@@ -109,41 +116,30 @@ public class MainActivity extends FragmentActivity{
     private List<Fragment> getFragments() {
         List<Fragment> listFragments = new ArrayList<Fragment>();
         listFragments.add((MessageFragment.newInstance(messages)));
-        //listFragments.add(PlaceFragment.newInstance(places));
+        listFragments.add(PlaceFragment.newInstance(places));
         return listFragments;
     }
 
-    public class checkInHelper extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            if (checkInService == null) { // Only do this once
-                Checkins.Builder builder = new Checkins.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        // options for running against local devappserver
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
-                        // - turn off compression when running against local devappserver
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
-                checkInService = builder.build();
-            }
-            return true;
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        if (tab.getPosition() == 0) {
+            MessageFragment messageFragment = MessageFragment.newInstance(messages);
+            getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, messageFragment).commit();
+        }
+        else if (tab.getPosition() == 1) {
+            PlaceFragment placeFragment = PlaceFragment.newInstance(places);
+            getSupportFragmentManager().beginTransaction().replace(R.id.drawer_layout, placeFragment).commit();
         }
 
-        @Override
-        protected void onPostExecute(final Boolean success) {
-
-        }
-
-        @Override
-        protected void onCancelled() {
-
-        }
     }
 
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
+
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+
+    }
 }

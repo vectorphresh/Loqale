@@ -49,7 +49,7 @@ public class PlaceAdapter extends ArrayAdapter<PlaceItem> {
 
         PlaceItem item = getItem(position);
         ((ImageView) convertView.findViewById(R.id.pic_place_category))
-                .setImageDrawable(Resources.getSystem().getDrawable(item.getPicCategory()));
+                .setImageDrawable(item.getPicCategory());
         ((TextView) convertView.findViewById(R.id.place_name)).setText(item.getPlaceName());
         ((TextView) convertView.findViewById(R.id.place_distance)).setText(item.getDistance().toString());
 

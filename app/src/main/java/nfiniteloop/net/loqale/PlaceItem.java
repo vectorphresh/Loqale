@@ -8,15 +8,15 @@ import android.os.Parcelable;
  * Created by vaek on 12/6/14.
  */
 public class PlaceItem implements Parcelable {
-    private int picCategory;
+    private Drawable picCategory;
     private String placeName;
     private Double longitude;
     private Double latitude;
-    private Double distance;
+    private String distance;
 
     public PlaceItem() {}
 
-    public PlaceItem(int pic, String name, Double latitude, Double longitude, Double distance) {
+    public PlaceItem(Drawable pic, String name, Double latitude, Double longitude, String distance) {
         this.picCategory = pic;
         this.placeName = name;
         this.longitude = longitude;
@@ -31,14 +31,13 @@ public class PlaceItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(picCategory);
         parcel.writeString(placeName);
         parcel.writeDouble(latitude);
         parcel.writeDouble(longitude);
-        parcel.writeDouble(distance);
+        parcel.writeString(distance);
     }
 
-    public void setPicCategory(int picCategory) {
+    public void setPicCategory(Drawable picCategory) {
         this.picCategory = picCategory;
     }
 
@@ -54,7 +53,7 @@ public class PlaceItem implements Parcelable {
         this.placeName = placeName;
     }
 
-    public int getPicCategory() {
+    public Drawable getPicCategory() {
         return picCategory;
     }
 
@@ -70,11 +69,11 @@ public class PlaceItem implements Parcelable {
         return placeName;
     }
 
-    public Double getDistance() {
+    public String getDistance() {
         return distance;
     }
 
-    public void setDistance(Double distance) {
+    public void setDistance(String distance) {
         this.distance = distance;
     }
 }

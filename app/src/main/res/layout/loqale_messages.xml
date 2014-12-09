@@ -3,17 +3,18 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
     <ImageView
         android:id="@+id/list_pic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"/>
     <TextView
         android:id="@+id/list_username"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/list_pic"/>
+        android:layout_toRightOf="@+id/list_pic"
+        style="@android:style/TextAppearance.Holo.Large"/>
     <TextView
         android:id="@+id/list_msg"
         android:layout_width="wrap_content"

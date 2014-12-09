@@ -67,6 +67,16 @@ public class MessageFragment extends ListFragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        
+        MessageGetterTask mg = new MessageGetterTask(this);
+        this.asyncTaskWeakRef = new WeakReference<MessageGetterTask>(mg);
+        mg.execute();
+
+    }
+
     public class MessageGetterTask extends AsyncTask<Void, Void, ArrayList<MessageItem> > {
 
         List<RegistrationRecord> foo = new ArrayList<RegistrationRecord>();
@@ -92,7 +102,6 @@ public class MessageFragment extends ListFragment {
                                 abstractGoogleClientRequest.setDisableGZipContent(true);
                             }
                         });
-                log.info("Do I get here?");
                 // end options for devappserver
                 registrationService = builder.build();
             }
@@ -101,14 +110,14 @@ public class MessageFragment extends ListFragment {
                 foo.addAll(ugh.getItems());
 
                 if(!foo.isEmpty()) {
+                    log.info("Mitch!");
                     MessageItem mi = new MessageItem();
 
                     mi.setMessage(foo.get(0).getRegId());
                     mi.setUsername("Mitch");
-                    //int drawableId = R.drawable.ic_person_black_36dp;
-                    mi.setPicture(R.drawable.ic_person_black_36dp);
+                    int drawableId = R.drawable.ic_person_black_36dp;
+                    mi.setPicture(getResources().getDrawable(drawableId));
                     bar.add(mi);
-                    log.info("device"+ foo.get(0).getRegId());
                 }
             } catch (IOException e) {
                 e.printStackTrace();

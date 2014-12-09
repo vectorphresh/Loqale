@@ -25,7 +25,10 @@ public class CheckInEndpoint {
     @ApiMethod(name = "checkin")
     public void checkIn( CheckIn checkInItem) {
         ofy().save().entity(checkInItem).now();
-
+        Place checkInPlace = new Place();
+        checkInPlace = ofy().load().type(Place.class).filter("placeId", checkInItem.getPlaceId()).list().get(0);
+        User checkedInUser = ofy().load().type(User.class).filter("placeId", checkInItem.getUserId()).list().get(0);
+        TagUtil.recordEvent(2, "Checked In at " + checkInPlace.getName(), checkedInUser);
         UpdateRecommendations(checkInItem);
     }
 

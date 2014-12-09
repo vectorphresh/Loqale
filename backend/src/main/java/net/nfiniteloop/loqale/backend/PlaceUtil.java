@@ -2,7 +2,10 @@ package net.nfiniteloop.loqale.backend;
 
 import com.google.appengine.api.datastore.GeoPt;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,22 +18,34 @@ import static net.nfiniteloop.loqale.backend.OfyService.ofy;
 
 public class PlaceUtil {
     final static int radiusEarthMeters = 6378137;
+    final static double metersToMiles = 0.000621371;
 
     public static List<Place> getPlacesByProximity(GeoPt origin, Double proximityMeters, int count){
-        List<Place> places = new LinkedList<Place>();
+        List<Place> places = new ArrayList<Place>();
         double deltaLat = (float) proximityMeters.doubleValue() / radiusEarthMeters;
         double deltaLon =
                 (float) proximityMeters.doubleValue() / ( radiusEarthMeters * Math.cos(Math.toRadians(origin.getLongitude())) );
         float originLat = origin.getLatitude();
         float originLon = origin.getLongitude();
 
-        //query objectify
-        places.addAll(ofy().load().type(Place.class).filter("latitude >=", originLat + deltaLat)
-                .filter("latitude <=", originLat - deltaLat)
-                .filter("longitude >=", originLon + deltaLon)
-                .filter("longitude <=", originLon - deltaLon).limit(count).list());
+        //hmmm... inequality filters are limited to one operation
+        // this would be expensive on a large DB...
+        List<Place> results = new ArrayList<Place>();
+        places.addAll(ofy().load().type(Place.class).limit(count).list());
 
-        return places;
+        for(Iterator<Place> iter = places.iterator(); iter.hasNext();) {
+            Place p = iter.next();
+            GeoPt placeLocation = new GeoPt(p.getLatitude().floatValue(), p.getLongitude().floatValue());
+            double distance = PlaceUtil.getDistanceInMeters(origin,placeLocation);
+            if(distance <= proximityMeters){
+                // covert distance to string and pack into payload for device
+                double distanceMiles = distance * metersToMiles;
+                String distanceStr = String.format("%.2f", distanceMiles);
+                p.setDistance(distanceStr + " miles");
+                results.add(p);
+            }
+        }
+        return results;
     }
 
     public static double getDistanceInMeters(GeoPt location1, GeoPt location2){

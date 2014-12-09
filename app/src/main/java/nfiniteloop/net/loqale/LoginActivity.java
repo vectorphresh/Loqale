@@ -34,6 +34,7 @@ import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
 import net.nfiniteloop.loqale.backend.registration.Registration;
+import net.nfiniteloop.loqale.backend.registration.model.User;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -75,11 +76,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         setContentView(R.layout.activity_login);
         SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
         String deviceId = prefs.getString("deviceId", "");
-        log.info("retrieved stored deviceID[" + deviceId + "]");
 
-        if(!deviceId.isEmpty()){
-            launchMainActivity();
-        }
         // Set up the login form
         mDisplayNameView = (EditText) findViewById(R.id.user_disp_name);
 
@@ -130,7 +127,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
         String username = mDisplayNameView.getText().toString();
-        log.info("username[" + username + "]");
+        log.info("username[" + username +"," +password + " " + email +"] " + password.length());
         boolean cancel = false;
         View focusView = null;
 
@@ -300,11 +297,16 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
         private final String userPassword;
         private final String userName;
         private String deviceId;
+        Boolean isPassword = false;
 
-        public UserLoginTask(String username, String email, String pasword) {
+        public UserLoginTask(String username, String email, String password) {
             userEmail = email;
-            userPassword = pasword;
+            userPassword = password;
             userName = username;
+            if(!userPassword.isEmpty()) {
+                isPassword = true;
+            }
+
         }
 
         @Override
@@ -327,8 +329,14 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                 registrationService = builder.build();
             }
             SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
+            String storedPass = "";
             String storedEmail = prefs.getString("email", "");
-            String storedPass  = prefs.getString("password", "");
+            Boolean isPass = prefs.getBoolean("is_pass",false);
+            log.info(storedEmail + " " + storedPass);
+            if (isPass) {
+                storedPass = prefs.getString("password", "");
+            }
+            User userInfo = new User();
 
             if (storedEmail.isEmpty()) {
                 try {
@@ -342,8 +350,13 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                     UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
                     deviceId = deviceUuid.toString();
 
-                    Log.v(null, "sending deviceID:" + deviceId);
-                    registrationService.register(deviceId).execute();
+                    Log.v(null, "sending user["+userEmail+"] with deviceId[" + deviceId +"]");
+                    userInfo.setDeviceId(deviceId);
+                    userInfo.setUserId(userEmail);
+                    userInfo.setDisplayName(userName);
+                    userInfo.setProximity(2000.0);
+
+                    registrationService.register(deviceId, userInfo).execute();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -354,7 +367,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
             else{
                 // existing user cases
                 // no password
-                if( storedPass.isEmpty() && (storedEmail == userEmail))
+                if( !isPass && (storedEmail.equalsIgnoreCase(userEmail)))
                 {
                     return true;
                 }
@@ -378,9 +391,10 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("username", userName);
                 editor.putString("email", userEmail);
-                editor.putString("password", userPassword);
-                editor.putString("deviceId", deviceId);
-                editor.putBoolean("newUser", true);
+                editor.putBoolean("is_pass", isPassword);
+                if( isPassword) {
+                    editor.putString("password", userPassword);
+                }
                 editor.commit();
                 launchMainActivity();
                 finish();

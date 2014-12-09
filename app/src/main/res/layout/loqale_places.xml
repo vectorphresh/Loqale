@@ -11,9 +11,10 @@
         android:id="@+id/place_name"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_alignParentBottom="true"
+        android:layout_alignParentBottom="false"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/pic_place_category"/>
+        android:layout_toRightOf="@+id/pic_place_category"
+        style="@android:style/TextAppearance.Holo.Large"/>
     <TextView
         android:id="@+id/place_distance"
         android:layout_width="wrap_content"

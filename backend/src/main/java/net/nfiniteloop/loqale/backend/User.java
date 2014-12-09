@@ -25,6 +25,8 @@ public class User {
 
     private List<String> categories = new ArrayList<String>();
 
+    private String deviceId;
+
     public String getUserId() {
         return userId;
     }
@@ -73,4 +75,11 @@ public class User {
         return proximity;
     }
 
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
 }

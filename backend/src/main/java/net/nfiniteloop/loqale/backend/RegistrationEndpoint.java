@@ -4,6 +4,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,17 +35,19 @@ public class RegistrationEndpoint {
      * @param regId The Google Cloud Messaging registration Id to add
      */
     @ApiMethod(name = "register")
-    public void registerDevice(@Named("regId") String regId) {
+    public void registerDevice(@Named("regId") String regId, User userInfo) {
         if (findRecord(regId) != null) {
             log.info("Device " + regId + " already registered, skipping register");
             return;
         }
+
         RegistrationRecord record = new RegistrationRecord();
-        User user = new User();
         record.setRegId(regId);
-        user.setUserId(regId);
+        userInfo.setUserId(regId);
         ofy().save().entity(record).now();
-        ofy().save().entity(user).now();
+        ofy().save().entity(userInfo).now();
+        TagUtil.recordEvent(1, "Welcome to Loqale!", userInfo);
+
     }
 
     /**

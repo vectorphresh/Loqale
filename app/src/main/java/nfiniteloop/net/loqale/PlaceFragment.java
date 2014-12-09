@@ -89,7 +89,8 @@ public class PlaceFragment extends ListFragment {
         List<Place> foo = new ArrayList<Place>();
         ArrayList<PlaceItem> bar = new ArrayList<PlaceItem>();
         private WeakReference<PlaceFragment> fragmentWeakRef;
-        private Double longitude, latitude;
+        private Double longitude = new Double(-118.3503218);
+        private Double latitude = new Double(33.8640103);
 
         private PlaceGetterTask(PlaceFragment fragment) {
             this.fragmentWeakRef = new WeakReference<PlaceFragment>(fragment);
@@ -119,23 +120,23 @@ public class PlaceFragment extends ListFragment {
             }
             try {
                 int count=10;
-                Double range =1000.0;
+                Double range = new Double(1000.0);
                 PlaceCollection ugh = placesService.
                         listPlaces(count, longitude, latitude, range).execute();
-                foo.addAll(ugh.getItems());
-
-                if(!foo.isEmpty()) {
-                    for( Place p : foo) {
-                        PlaceItem mi = new PlaceItem();
-                        mi.setPlaceName(p.getName());
-                        mi.setLongitude(p.getLongitude());
-                        mi.setLatitude(p.getLatitude());
-                        mi.setDistance(p.getDistance());
+                if(!ugh.isEmpty()) {
+                    log.info(ugh.size() +" places returned");
+                    foo.addAll(ugh.getItems());
+                    for (Place p : foo) {
+                        PlaceItem pi = new PlaceItem();
+                        pi.setPlaceName(p.getName());
+                        pi.setLongitude(p.getLongitude());
+                        pi.setLatitude(p.getLatitude());
+                        pi.setDistance(p.getDistance());
                         // we need a map here!
-
-                        mi.setPicCategory(this.fragmentWeakRef.get()
-                                .categoryToIconId(p.getCategory()));
-                        bar.add(mi);
+                        int picId = this.fragmentWeakRef.get()
+                                .categoryToIconId(p.getCategory());
+                        pi.setPicCategory(getResources().getDrawable(picId));
+                        bar.add(pi);
                     }
                 }
             } catch (IOException e) {

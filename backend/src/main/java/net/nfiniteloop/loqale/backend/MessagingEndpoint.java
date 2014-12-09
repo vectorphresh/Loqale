@@ -5,9 +5,12 @@ import com.google.android.gcm.server.Message;
 import com.google.android.gcm.server.Result;
 import com.google.android.gcm.server.Sender;
 import com.google.api.server.spi.config.Api;
+import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Named;
@@ -71,5 +74,13 @@ public class MessagingEndpoint {
                 }
             }
         }
+    }
+
+    @ApiMethod(name = "getMessages")
+    public Collection<Tag> getEventMessages(@Named("regId") String regId) {
+        List<Tag> messages = new ArrayList<Tag>();
+
+        messages = ofy().load().type(Tag.class).filter("regId ==", regId).list();
+        return messages;
     }
 }
