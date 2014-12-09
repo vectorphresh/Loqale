@@ -129,6 +129,7 @@ public class Recommender extends HttpServlet{
             }
             contentFilter = new ContentFilter(recUser.get(0).getUserId(), refinedPlaces);
             filterResults = contentFilter.filter();
+            ofy().save().entities(filterResults).now();
             // Redo process for ( proximityLimit * DEFAULT_FAR_DISTANCE_MULTIPLIER )
         }
         else {
@@ -149,6 +150,7 @@ public class Recommender extends HttpServlet{
                 // make sure you fix this! you could oull the whole db!
                 similarPlaces.addAll(ofy().load().type(Place.class).filter("category", s).list());
             }
+
             // ok, got the categories. build a list of raw places
             // challenges:
             // i need to limit the query to locations within range of the
@@ -165,7 +167,7 @@ public class Recommender extends HttpServlet{
             // recommendedPlaces = refinedPlaces.getPlaces();
 
             // send list of recommended places to user
-
+            ofy().save().entities(similarPlaces).now();
         }
         // send  filterResults the user
 

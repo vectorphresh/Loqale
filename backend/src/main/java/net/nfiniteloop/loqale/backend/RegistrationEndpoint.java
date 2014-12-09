@@ -46,7 +46,8 @@ public class RegistrationEndpoint {
         userInfo.setUserId(regId);
         ofy().save().entity(record).now();
         ofy().save().entity(userInfo).now();
-        TagUtil.recordEvent(1, "Welcome to Loqale!", userInfo);
+
+        //TagUtil.recordEvent(1, "Welcome to Loqale!", userInfo);
 
     }
 

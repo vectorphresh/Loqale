@@ -1,6 +1,8 @@
 package nfiniteloop.net.loqale;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -110,11 +112,13 @@ public class MessageFragment extends ListFragment {
                 foo.addAll(ugh.getItems());
 
                 if(!foo.isEmpty()) {
-                    log.info("Mitch!");
                     MessageItem mi = new MessageItem();
 
                     mi.setMessage(foo.get(0).getRegId());
-                    mi.setUsername("Mitch");
+                    SharedPreferences prefs = getActivity()
+                            .getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
+                    String loqaleUser = prefs.getString("username", "Loqale User");
+                    mi.setUsername(loqaleUser);
                     int drawableId = R.drawable.ic_person_black_36dp;
                     mi.setPicture(getResources().getDrawable(drawableId));
                     bar.add(mi);

@@ -13,15 +13,17 @@ public class PlaceItem implements Parcelable {
     private Double longitude;
     private Double latitude;
     private String distance;
+    private String placeId;
 
     public PlaceItem() {}
 
-    public PlaceItem(Drawable pic, String name, Double latitude, Double longitude, String distance) {
+    public PlaceItem(Drawable pic, String name, Double latitude, Double longitude, String distance, String placeId) {
         this.picCategory = pic;
         this.placeName = name;
         this.longitude = longitude;
         this.latitude = latitude;
         this.distance = distance;
+        this.placeId = placeId;
     }
 
     @Override
@@ -35,6 +37,7 @@ public class PlaceItem implements Parcelable {
         parcel.writeDouble(latitude);
         parcel.writeDouble(longitude);
         parcel.writeString(distance);
+        parcel.writeString(placeId);
     }
 
     public void setPicCategory(Drawable picCategory) {
@@ -75,6 +78,14 @@ public class PlaceItem implements Parcelable {
 
     public void setDistance(String distance) {
         this.distance = distance;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
+    }
+
+    public String getPlaceId() {
+        return placeId;
     }
 }
 

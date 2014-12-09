@@ -8,11 +8,18 @@
             <param-value>net.nfiniteloop.loqale.backend.RegistrationEndpoint, net.nfiniteloop.loqale.backend.RecommendationEndpoint, net.nfiniteloop.loqale.backend.CheckInEndpoint, net.nfiniteloop.loqale.backend.PlaceEndpoint</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>Recommender</servlet-name>
+        <servlet-class>net.nfiniteloop.loqale.backend.Recommender</servlet-class>
+      </servlet>
     <servlet-mapping>
         <servlet-name>SystemServiceServlet</servlet-name>
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
-
+    <servlet-mapping>
+        <servlet-name>Recommender</servlet-name>
+        <url-pattern>/recommend</url-pattern>
+    </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>

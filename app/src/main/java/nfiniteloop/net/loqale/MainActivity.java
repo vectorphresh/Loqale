@@ -37,14 +37,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     LoqalePageAdapter pageAdapter;
     ViewPager pager;
 
-    // asynchronous support classes
-    // TODO: Move all to respective fragments
-
-    // endpoint client services
-    private static Checkins checkInService;
-    private static Places placesService;
-    private static Recommendations recommendationService;
-
     //container class for places fragment
     private ArrayList<MessageItem> messages;
     private ArrayList<PlaceItem> places;
