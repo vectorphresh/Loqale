@@ -23,14 +23,11 @@ import net.nfiniteloop.loqale.backend.checkins.model.CheckIn;
 import net.nfiniteloop.loqale.backend.places.Places;
 import net.nfiniteloop.loqale.backend.places.model.Place;
 import net.nfiniteloop.loqale.backend.places.model.PlaceCollection;
-import net.nfiniteloop.loqale.backend.registration.Registration;
 import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecord;
-import net.nfiniteloop.loqale.backend.registration.model.RegistrationRecordCollection;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,11 +39,11 @@ import java.util.logging.Logger;
  */
 public class PlaceFragment extends ListFragment {
     private Logger log = Logger.getLogger(PlaceFragment.class.getName());
-    private PlaceAdapter adapter;
-    Places placesService;
-    Checkins checkinsService;
-    private Boolean dialogResult;
-    private WeakReference<PlaceGetterTask> asyncTaskWeakRef;
+    private PlaceAdapter mPlaceAdapter;
+    private Places mPlacesService;
+    private Checkins mCheckinsService;
+    private Boolean mDialogResult;
+    private WeakReference<PlaceGetterTask> mAsyncTaskWeakRef;
 
     //test harness containers
     // TODO: Implement real location gatherer.
@@ -68,7 +65,7 @@ public class PlaceFragment extends ListFragment {
         //items.add((PlaceItem) savedInstanceState.getParcelableArrayList("messages").get(0));
         setRetainInstance(true);
         PlaceGetterTask mg = new PlaceGetterTask(this);
-        this.asyncTaskWeakRef = new WeakReference<PlaceGetterTask>(mg);
+        this.mAsyncTaskWeakRef = new WeakReference<PlaceGetterTask>(mg);
         mg.execute();
 
 
@@ -86,7 +83,7 @@ public class PlaceFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int i, long id) {
         // stackOverflow
         // https://stackoverflow.com/questions/2478517/how-to-display-a-yes-no-dialog-box-in-android
-        dialogResult = false;
+        mDialogResult = false;
         CheckInHelperTask ck = new CheckInHelperTask(this);
         super.onListItemClick(l, v, i, id);
 
@@ -119,7 +116,7 @@ public class PlaceFragment extends ListFragment {
         builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int which) {
-                dialogResult = true;
+                mDialogResult = true;
                 dialog.dismiss();
             }
 
@@ -136,7 +133,7 @@ public class PlaceFragment extends ListFragment {
         AlertDialog alert = builder.create();
         alert.show();
 
-        return dialogResult;
+        return mDialogResult;
 
     }
 
@@ -157,12 +154,12 @@ public class PlaceFragment extends ListFragment {
 
         List<Place> foo = new ArrayList<Place>();
         ArrayList<PlaceItem> bar = new ArrayList<PlaceItem>();
-        private WeakReference<PlaceFragment> fragmentWeakRef;
+        private WeakReference<PlaceFragment> mFragmentWeakRef;
         private Double longitude = new Double(-118.3503218);
         private Double latitude = new Double(33.8640103);
 
         private PlaceGetterTask(PlaceFragment fragment) {
-            this.fragmentWeakRef = new WeakReference<PlaceFragment>(fragment);
+            this.mFragmentWeakRef = new WeakReference<PlaceFragment>(fragment);
         }
         // must call this first!!
         public void setLocation(Double Latitude, Double Longitude) {
@@ -171,7 +168,7 @@ public class PlaceFragment extends ListFragment {
         }
         @Override
         protected ArrayList<PlaceItem> doInBackground(Void... params) {
-            if (placesService == null) { // Only do this once
+            if (mPlacesService == null) { // Only do this once
                 Places.Builder builder = new Places.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
@@ -185,12 +182,12 @@ public class PlaceFragment extends ListFragment {
                             }
                         });
                 // end options for devappserver
-                placesService = builder.build();
+                mPlacesService = builder.build();
             }
             try {
                 int count=10;
                 Double range = new Double(1000.0);
-                PlaceCollection ugh = placesService.
+                PlaceCollection ugh = mPlacesService.
                         listPlaces(count, longitude, latitude, range).execute();
                 if(!ugh.isEmpty()) {
                     log.info(ugh.size() +" places returned");
@@ -203,7 +200,7 @@ public class PlaceFragment extends ListFragment {
                         pi.setDistance(p.getDistance());
                         pi.setPlaceId(p.getPlaceId());
                         // we need a map here!
-                        int picId = this.fragmentWeakRef.get()
+                        int picId = this.mFragmentWeakRef.get()
                                 .categoryToIconId(p.getCategory());
                         pi.setPicCategory(getResources().getDrawable(picId));
                         bar.add(pi);
@@ -218,9 +215,9 @@ public class PlaceFragment extends ListFragment {
 
         @Override
         protected void onPostExecute(final ArrayList<PlaceItem> result) {
-            if (this.fragmentWeakRef.get() != null) {
-                adapter = new PlaceAdapter(getActivity(), result);
-                setListAdapter(adapter);
+            if (this.mFragmentWeakRef.get() != null) {
+                mPlaceAdapter = new PlaceAdapter(getActivity(), result);
+                setListAdapter(mPlaceAdapter);
             }
 
         }
@@ -238,7 +235,7 @@ public class PlaceFragment extends ListFragment {
 
         @Override
         protected Boolean doInBackground(CheckIn... params) {
-            if (checkinsService == null) { // Only do this once
+            if (mCheckinsService == null) { // Only do this once
                 Checkins.Builder builder = new Checkins.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
@@ -252,12 +249,12 @@ public class PlaceFragment extends ListFragment {
                             }
                         });
                 // end options for devappserver
-                checkinsService = builder.build();
+                mCheckinsService = builder.build();
             }
             try {
                 CheckIn checkInItem = params[0];
                 log.info("Testing...");
-                checkinsService.checkin(checkInItem).execute();
+                mCheckinsService.checkin(checkInItem).execute();
 
             } catch (IOException e1) {
                 e1.printStackTrace();

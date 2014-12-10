@@ -24,6 +24,8 @@ import java.util.List;
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
  * API Guide</a> for more information on developing a Settings UI.
  */
+// MFrancis: This is a stub class I was extending to support store user preferences
+// TODO: Future Work: Store user proximity and place categories here
 public class SettingsActivity extends PreferenceActivity {
     /**
      * Determines whether to always show the simplified settings UI, where

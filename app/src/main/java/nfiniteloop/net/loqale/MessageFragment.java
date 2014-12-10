@@ -1,18 +1,13 @@
 package nfiniteloop.net.loqale;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -35,9 +30,9 @@ import java.util.logging.Logger;
  */
 public class MessageFragment extends ListFragment {
     private Logger log = Logger.getLogger(MessageFragment.class.getName());
-    private MessageAdapter adapter;
-    Registration registrationService;
-    private WeakReference<MessageGetterTask> asyncTaskWeakRef;
+    private MessageAdapter mMessageFragmentAdapter;
+    private Registration mRegistrationService;
+    private WeakReference<MessageGetterTask> mAsyncTaskWeakRef;
 
 
     public static MessageFragment newInstance(ArrayList<MessageItem> items) {
@@ -55,7 +50,7 @@ public class MessageFragment extends ListFragment {
         //items.add((MessageItem) savedInstanceState.getParcelableArrayList("messages").get(0));
         setRetainInstance(true);
         MessageGetterTask mg = new MessageGetterTask(this);
-        this.asyncTaskWeakRef = new WeakReference<MessageGetterTask>(mg);
+        this.mAsyncTaskWeakRef = new WeakReference<MessageGetterTask>(mg);
         mg.execute();
 
 
@@ -74,7 +69,7 @@ public class MessageFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
         
         MessageGetterTask mg = new MessageGetterTask(this);
-        this.asyncTaskWeakRef = new WeakReference<MessageGetterTask>(mg);
+        this.mAsyncTaskWeakRef = new WeakReference<MessageGetterTask>(mg);
         mg.execute();
 
     }
@@ -91,7 +86,7 @@ public class MessageFragment extends ListFragment {
 
         @Override
         protected ArrayList<MessageItem> doInBackground(Void... params) {
-            if (registrationService == null) { // Only do this once
+            if (mRegistrationService == null) { // Only do this once
                 Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
@@ -105,10 +100,10 @@ public class MessageFragment extends ListFragment {
                             }
                         });
                 // end options for devappserver
-                registrationService = builder.build();
+                mRegistrationService = builder.build();
             }
             try {
-                RegistrationRecordCollection ugh = registrationService.listDevices(1).execute();
+                RegistrationRecordCollection ugh = mRegistrationService.listDevices(1).execute();
                 foo.addAll(ugh.getItems());
 
                 if(!foo.isEmpty()) {
@@ -133,8 +128,8 @@ public class MessageFragment extends ListFragment {
         @Override
         protected void onPostExecute(final ArrayList<MessageItem> result) {
             if (this.fragmentWeakRef.get() != null) {
-                adapter = new MessageAdapter(getActivity(), result);
-                setListAdapter(adapter);
+                mMessageFragmentAdapter = new MessageAdapter(getActivity(), result);
+                setListAdapter(mMessageFragmentAdapter);
             }
 
         }

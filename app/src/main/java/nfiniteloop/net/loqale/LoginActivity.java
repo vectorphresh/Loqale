@@ -51,6 +51,8 @@ import java.util.logging.Logger;
  * https://developers.google.com/+/mobile/android/getting-started#step_1_enable_the_google_api
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  * // TODO: I was not able to extend this class to support oauth in a timely fashion.
+ * // This is a skeleton class that I extended to support interfacinng with backend
+ * // service
  */
 public class LoginActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 

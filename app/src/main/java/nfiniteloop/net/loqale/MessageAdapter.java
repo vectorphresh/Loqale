@@ -1,7 +1,6 @@
 package nfiniteloop.net.loqale;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,25 +16,26 @@ import java.util.List;
  */
 public class MessageAdapter extends ArrayAdapter<MessageItem> {
 
-    Context context;
-    List<MessageItem> rowItem;
+    private Context mContext;
+    private List<MessageItem> mRowItem;
 
     MessageAdapter(Context context, List<MessageItem> rowItem) {
         super(context,R.layout.loqale_messages, rowItem);
-        this.rowItem = new ArrayList<MessageItem>();
-        this.rowItem.addAll(rowItem);
+        this.mRowItem = new ArrayList<MessageItem>();
+        this.mRowItem.addAll(rowItem);
+        this.mContext = context;
     }
 
     @Override
     public int getCount() {
 
-        return rowItem.size();
+        return mRowItem.size();
     }
 
     @Override
     public long getItemId(int position) {
 
-        return rowItem.indexOf(getItem(position));
+        return mRowItem.indexOf(getItem(position));
     }
 
     @Override
