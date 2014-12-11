@@ -16,7 +16,9 @@ import javax.inject.Named;
 /**
  * Created by vaek on 11/16/14.
  */
-@Api(name = "places", version = "v1", namespace = @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net", ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
+@Api(name = "places", version = "v1", namespace =
+    @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net",
+            ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
 public class PlaceEndpoint {
     private static final Logger log = Logger.getLogger(PlaceEndpoint.class.getName());
 

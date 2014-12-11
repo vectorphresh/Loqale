@@ -24,7 +24,8 @@ public class PlaceUtil {
         List<Place> places = new ArrayList<Place>();
         double deltaLat = (float) proximityMeters.doubleValue() / radiusEarthMeters;
         double deltaLon =
-                (float) proximityMeters.doubleValue() / ( radiusEarthMeters * Math.cos(Math.toRadians(origin.getLongitude())) );
+                (float) proximityMeters.doubleValue() /
+                        ( radiusEarthMeters * Math.cos(Math.toRadians(origin.getLongitude())) );
         float originLat = origin.getLatitude();
         float originLon = origin.getLongitude();
 
@@ -35,7 +36,8 @@ public class PlaceUtil {
 
         for(Iterator<Place> iter = places.iterator(); iter.hasNext();) {
             Place p = iter.next();
-            GeoPt placeLocation = new GeoPt(p.getLatitude().floatValue(), p.getLongitude().floatValue());
+            GeoPt placeLocation =
+                    new GeoPt(p.getLatitude().floatValue(), p.getLongitude().floatValue());
             double distance = PlaceUtil.getDistanceInMeters(origin,placeLocation);
             if(distance <= proximityMeters){
                 // covert distance to string and pack into payload for device

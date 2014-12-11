@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Created by vaek on 11/5/14.
+ */
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
     // Logging for debugging
     private Logger log = Logger.getLogger(MainActivity.class.getName());

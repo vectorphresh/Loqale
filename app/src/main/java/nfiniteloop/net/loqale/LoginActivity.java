@@ -42,6 +42,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+// This is a skeleton class that I extended to support interfacinng with backend
+// service
 
 /**
  * A login screen that offers login via email/password and via Google+ sign in.
@@ -51,8 +53,7 @@ import java.util.logging.Logger;
  * https://developers.google.com/+/mobile/android/getting-started#step_1_enable_the_google_api
  * and follow the steps in "Step 1" to create an OAuth 2.0 client for your package.
  * // TODO: I was not able to extend this class to support oauth in a timely fashion.
- * // This is a skeleton class that I extended to support interfacinng with backend
- * // service
+
  */
 public class LoginActivity extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -69,14 +70,15 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
     private View mLoginFormView;
     private EditText mDisplayNameView;
 
-    private static Registration registrationService = null;
+    private static Registration mRegistrationService = null;
     private static final Logger log = Logger.getLogger(LoginActivity.class.getName());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences prefs =
+                getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
         String deviceId = prefs.getString("deviceId", "");
 
         // Set up the login form
@@ -295,17 +297,17 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String userEmail;
-        private final String userPassword;
-        private final String userName;
-        private String deviceId;
+        private final String mUserEmail;
+        private final String mUserPassword;
+        private final String mUserName;
+        private String mDeviceId;
         Boolean isPassword = false;
 
         public UserLoginTask(String username, String email, String password) {
-            userEmail = email;
-            userPassword = password;
-            userName = username;
-            if(!userPassword.isEmpty()) {
+            mUserEmail = email;
+            mUserPassword = password;
+            mUserName = username;
+            if(!mUserPassword.isEmpty()) {
                 isPassword = true;
             }
 
@@ -313,7 +315,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            if (registrationService == null) { // Only do this once
+            if (mRegistrationService == null) { // Only do this once
                 // TODO: Clean up begin
                 Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
@@ -328,7 +330,7 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                             }
                         });
                 // TODO: clean up end
-                registrationService = builder.build();
+                mRegistrationService = builder.build();
             }
             SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
             String storedPass = "";
@@ -350,15 +352,15 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                     androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
 
                     UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
-                    deviceId = deviceUuid.toString();
+                    mDeviceId = deviceUuid.toString();
 
-                    Log.v(null, "sending user["+userEmail+"] with deviceId[" + deviceId +"]");
-                    userInfo.setDeviceId(deviceId);
-                    userInfo.setUserId(userEmail);
-                    userInfo.setDisplayName(userName);
+                    Log.v(null, "sending user["+ mUserEmail +"] with mDeviceId[" + mDeviceId +"]");
+                    userInfo.setDeviceId(mDeviceId);
+                    userInfo.setUserId(mUserEmail);
+                    userInfo.setDisplayName(mUserName);
                     userInfo.setProximity(2000.0);
 
-                    registrationService.register(deviceId, userInfo).execute();
+                    mRegistrationService.register(mDeviceId, userInfo).execute();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -369,12 +371,12 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
             else{
                 // existing user cases
                 // no password
-                if( !isPass && (storedEmail.equalsIgnoreCase(userEmail)))
+                if( !isPass && (storedEmail.equalsIgnoreCase(mUserEmail)))
                 {
                     return true;
                 }
                 // user with password
-                if ( (storedEmail == userEmail) && (storedPass == userPassword) ){
+                if ( (storedEmail == mUserEmail) && (storedPass == mUserPassword) ){
                     // nothing to do since the user has already authenticated
                     return true;
                 }
@@ -391,11 +393,11 @@ public class LoginActivity extends Activity implements LoaderManager.LoaderCallb
                 // TODO: Encrypt the credentials
                 SharedPreferences prefs = getSharedPreferences(LoqaleConstants.PREFS_NAME, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("username", userName);
-                editor.putString("email", userEmail);
+                editor.putString("username", mUserName);
+                editor.putString("email", mUserEmail);
                 editor.putBoolean("is_pass", isPassword);
                 if( isPassword) {
-                    editor.putString("password", userPassword);
+                    editor.putString("password", mUserPassword);
                 }
                 editor.commit();
                 launchMainActivity();

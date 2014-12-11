@@ -24,7 +24,9 @@ import static net.nfiniteloop.loqale.backend.OfyService.ofy;
  * authentication! If this app is deployed, anyone can access this endpoint! If
  * you'd like to add authentication, take a look at the documentation.
  */
-@Api(name = "registration", version = "v1", namespace = @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net", ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
+@Api(name = "registration", version = "v1", namespace =
+    @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net",
+        ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
 public class RegistrationEndpoint {
 
     private static final Logger log = Logger.getLogger(RegistrationEndpoint.class.getName());

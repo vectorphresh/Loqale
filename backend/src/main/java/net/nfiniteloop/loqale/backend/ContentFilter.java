@@ -2,6 +2,7 @@ package net.nfiniteloop.loqale.backend;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -9,9 +10,10 @@ import java.util.UUID;
  * Created by vaek on 11/2/14.
  */
 public class ContentFilter implements Filter {
-    public ContentFilter(String userId, List<Place> similarPlaces) {
+    public ContentFilter(String userId, List<Place> similarPlaces, List<String> userCategories) {
         setUserId(userId);
         mPlaceList = new ArrayList<Place>(similarPlaces);
+        mCategotries.addAll(userCategories);
     }
 
     @Override
@@ -20,6 +22,9 @@ public class ContentFilter implements Filter {
         List<Recommendation> returnList = new ArrayList<Recommendation>();
         while( count != 10 ){
             for (Place p : mPlaceList){
+                if(!mCategotries.contains(p.getCategory())){
+                    continue;
+                }
                 Recommendation newRec = new Recommendation();
                 newRec.setContentId(UUID.randomUUID().toString());
                 newRec.setRecommendationType(RecommendationType.PLACE);
@@ -47,4 +52,5 @@ public class ContentFilter implements Filter {
 
     private String mUserId;
     private List<Place> mPlaceList;
+    private HashSet<String> mCategotries;
 }

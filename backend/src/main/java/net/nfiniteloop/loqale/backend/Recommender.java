@@ -90,7 +90,8 @@ public class Recommender extends HttpServlet{
             //    get the categories of interest to the new user
             //    define 2 ranges to test for distance based on user settings (d, and 4d)
             //    at each range, query for places that fall into each place category ( ala A/B testing)
-            //    for range d look for places in same category, but with different qualities (exluding distance)
+            //    for range d look for places in same category,
+            //      but with different qualities (exluding distance)
             //    pseudo
             //       for places in category
             //          place x cross place y = identity martrix
@@ -104,8 +105,11 @@ public class Recommender extends HttpServlet{
             //    send out cold recommendations
             Double proximityLimit = recUser.get(0).getProximity();
             List<String> preferredCategories = new ArrayList<String>();
+            preferredCategories = recUser.get(0).getCategories();
             similarPlaces =
-                    PlaceUtil.getPlacesByProximity(recUser.get(0).getLocation(), proximityLimit, placeQueryLimit);
+                    PlaceUtil.getPlacesByProximity(recUser.get(0).getLocation(),
+                            proximityLimit,
+                            placeQueryLimit);
             // TODO: Filter places by category. Or better, move category filtering into ContentFilter
             //preferredCategories = recUser.get(0).getCategories();
             //for( String c : preferredCategories) {
@@ -127,10 +131,33 @@ public class Recommender extends HttpServlet{
                 }
                 // List<Place> refinedPlaces = new LinkedList<Place>();
             }
-            contentFilter = new ContentFilter(recUser.get(0).getUserId(), refinedPlaces);
+            contentFilter =
+                    new ContentFilter(recUser.get(0).getUserId(), refinedPlaces, preferredCategories);
             filterResults = contentFilter.filter();
             ofy().save().entities(filterResults).now();
-            // Redo process for ( proximityLimit * DEFAULT_FAR_DISTANCE_MULTIPLIER )
+            proximityLimit *= DEFAULT_FAR_DISTANCE_MULTI;
+            similarPlaces =
+                    PlaceUtil.getPlacesByProximity(recUser.get(0).getLocation(),
+                            proximityLimit,
+                            placeQueryLimit);
+            /*
+                       ListIterator<Place> iter = similarPlaces.listIterator();
+            while ( iter.hasNext() ) {
+                Place singlePlace = iter.next();
+                similarPlaces.remove(0);
+                // for each place, use the quality relationships to sam ple places for A/B test
+                if (iter.hasNext()) {
+                    Matrix qualityMatrix = new Matrix(singlePlace.getQualityMatrix());
+                    Matrix pMatrix = new Matrix(iter.next().getQualityMatrix());
+                    pMatrix = pMatrix.times(qualityMatrix);
+                    if (!qualityMatrix.equals(pMatrix.inverse())) {
+                        refinedPlaces.add(iter.previous());
+                        refinedPlaces.add(singlePlace);
+                    }
+                }
+                // List<Place> refinedPlaces = new LinkedList<Place>();
+            }
+             */
         }
         else {
 
@@ -141,7 +168,8 @@ public class Recommender extends HttpServlet{
             // don't forget about recommendations that were liked! use that list to filter out
             // places that don't match on dimensional criteria
             for (CheckIn c : userCheckIns) {
-                List<Place> checkInPlace = ofy().load().type(Place.class).filter("placeId", c.getPlaceId()).list();
+                List<Place> checkInPlace = ofy().load().type(Place.class)
+                        .filter("placeId", c.getPlaceId()).list();
                 categories.add(checkInPlace.get(0).getCategory());
 
             }
@@ -160,7 +188,8 @@ public class Recommender extends HttpServlet{
             // rec filter removes places the user has checked in to and previous recommendations
             // refinedPlaces = recFilter.getResults()
 
-            // friendfilter iterates over friends checkins and does a placeId count. looks for collisions and mark common ids
+            // friendfilter iterates over friends checkins and does a placeId count.
+            // looks for collisions and mark common ids
             // with higher weight
             // Filter FriendFilter = FriendFilter( refinedPlaces );
             // List recommendedPlaces = new LinkedList<Places>();

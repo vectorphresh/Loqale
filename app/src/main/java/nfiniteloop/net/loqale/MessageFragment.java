@@ -25,8 +25,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * A fragment representing a list of Items.
- * no listener, since were just displaying static items
+ * Created by vaek on 12/1/14.
  */
 public class MessageFragment extends ListFragment {
     private Logger log = Logger.getLogger(MessageFragment.class.getName());
@@ -58,7 +57,6 @@ public class MessageFragment extends ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // select an layout to inflate
         View view = inflater.inflate(R.layout.loqale_messages,container,false);
 
         return view;
@@ -87,7 +85,8 @@ public class MessageFragment extends ListFragment {
         @Override
         protected ArrayList<MessageItem> doInBackground(Void... params) {
             if (mRegistrationService == null) { // Only do this once
-                Registration.Builder builder = new Registration.Builder(AndroidHttp.newCompatibleTransport(),
+                Registration.Builder builder =
+                        new Registration.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
                         // options for running against local devappserver
                         // - 10.0.2.2 is localhost's IP address in Android emulator

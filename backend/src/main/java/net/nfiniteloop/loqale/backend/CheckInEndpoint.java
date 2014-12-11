@@ -19,7 +19,9 @@ import static net.nfiniteloop.loqale.backend.OfyService.ofy;
 /**
  * Created by vaek on 11/16/14.
  */
-@Api(name = "checkins", version = "v1", namespace = @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net", ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
+@Api(name = "checkins", version = "v1", namespace =
+    @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net",
+            ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
 public class CheckInEndpoint {
     private static final Logger log = Logger.getLogger(RegistrationEndpoint.class.getName());
 
@@ -31,8 +33,12 @@ public class CheckInEndpoint {
     public void checkIn( CheckIn checkInItem) {
         ofy().save().entity(checkInItem).now();
         Place checkInPlace;
-        checkInPlace = ofy().load().type(Place.class).filter("placeId", checkInItem.getPlaceId()).list().get(0);
-        User checkedInUser = ofy().load().type(User.class).filter("placeId", checkInItem.getUserId()).list().get(0);
+        checkInPlace =
+                ofy().load().type(Place.class)
+                        .filter("placeId", checkInItem.getPlaceId()).list().get(0);
+        User checkedInUser =
+                ofy().load().type(User.class)
+                        .filter("placeId", checkInItem.getUserId()).list().get(0);
 
         TagUtil.recordEvent(2, "Checked In at " + checkInPlace.getName(), checkedInUser);
         UpdateRecommendations(checkInItem);
@@ -46,7 +52,9 @@ public class CheckInEndpoint {
      */
     @ApiMethod(name = "listcheckins")
     public CollectionResponse<CheckIn> listDevices(@Named("count") int count, User user) {
-        List<CheckIn> checkIns = ofy().load().type(CheckIn.class).limit(count).filter("userId", user.getUserId()).list();
+        List<CheckIn> checkIns =
+                ofy().load().type(CheckIn.class).limit(count)
+                        .filter("userId", user.getUserId()).list();
         return CollectionResponse.<CheckIn>builder().setItems(checkIns).build();
     }
 

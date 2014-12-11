@@ -16,7 +16,8 @@ import java.util.logging.Logger;
 import javax.inject.Named;
 
 import static net.nfiniteloop.loqale.backend.OfyService.ofy;
-
+// This is code I extended from an android studio template. I added getEventMessages
+// to support the Main feed Android application
 /**
  * An endpoint to send messages to devices registered with the backend
  *
@@ -27,7 +28,9 @@ import static net.nfiniteloop.loqale.backend.OfyService.ofy;
  * authentication! If this app is deployed, anyone can access this endpoint! If
  * you'd like to add authentication, take a look at the documentation.
  */
-@Api(name = "messaging", version = "v1", namespace = @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net", ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
+@Api(name = "messaging", version = "v1", namespace =
+    @ApiNamespace(ownerDomain = "backend.loqale.nfiniteloop.net",
+            ownerName = "backend.loqale.nfiniteloop.net", packagePath=""))
 public class MessagingEndpoint {
     private static final Logger log = Logger.getLogger(MessagingEndpoint.class.getName());
 
@@ -35,7 +38,7 @@ public class MessagingEndpoint {
     private static final String API_KEY = System.getProperty("gcm.api.key");
 
     /**
-     * Send to the first 10 devices (You can modify this to send to any number of devices or a specific device)
+     * Send to the first 10 devices
      *
      * @param message The message to send
      */
@@ -50,7 +53,8 @@ public class MessagingEndpoint {
         }
         Sender sender = new Sender(API_KEY);
         Message msg = new Message.Builder().addData("message", message).build();
-        List<RegistrationRecord> records = ofy().load().type(RegistrationRecord.class).limit(10).list();
+        List<RegistrationRecord> records =
+                ofy().load().type(RegistrationRecord.class).limit(10).list();
         for(RegistrationRecord record : records) {
             Result result = sender.send(msg, record.getRegId(), 5);
             if (result.getMessageId() != null) {
@@ -58,14 +62,16 @@ public class MessagingEndpoint {
                 String canonicalRegId = result.getCanonicalRegistrationId();
                 if (canonicalRegId != null) {
                     // if the regId changed, we have to update the datastore
-                    log.info("Registration Id changed for " + record.getRegId() + " updating to " + canonicalRegId);
+                    log.info("Registration Id changed for " + record.getRegId()
+                            + " updating to " + canonicalRegId);
                     record.setRegId(canonicalRegId);
                     ofy().save().entity(record).now();
                 }
             } else {
                 String error = result.getErrorCodeName();
                 if (error.equals(Constants.ERROR_NOT_REGISTERED)) {
-                    log.warning("Registration Id " + record.getRegId() + " no longer registered with GCM, removing from datastore");
+                    log.warning("Registration Id " + record.getRegId()
+                            + " no longer registered with GCM, removing from datastore");
                     // if the device is no longer registered with Gcm, remove it from the datastore
                     ofy().delete().entity(record).now();
                 }
