@@ -3,16 +3,12 @@ package net.nfiniteloop.loqale.backend;
 import com.google.appengine.api.datastore.GeoPt;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import static net.nfiniteloop.loqale.backend.OfyService.ofy;
 /**
- * Created by vaek on 12/1/14.
+ * Created by Mitch Francis on 12/1/14.
+ * See the file "LICENSE" for the full license governing this code.
  */
 
 
@@ -22,20 +18,13 @@ public class PlaceUtil {
 
     public static List<Place> getPlacesByProximity(GeoPt origin, Double proximityMeters, int count){
         List<Place> places = new ArrayList<Place>();
-        double deltaLat = (float) proximityMeters.doubleValue() / radiusEarthMeters;
-        double deltaLon =
-                (float) proximityMeters.doubleValue() /
-                        ( radiusEarthMeters * Math.cos(Math.toRadians(origin.getLongitude())) );
-        float originLat = origin.getLatitude();
-        float originLon = origin.getLongitude();
 
         //hmmm... inequality filters are limited to one operation
         // this would be expensive on a large DB...
         List<Place> results = new ArrayList<Place>();
         places.addAll(ofy().load().type(Place.class).limit(count).list());
 
-        for(Iterator<Place> iter = places.iterator(); iter.hasNext();) {
-            Place p = iter.next();
+        for(Place p : places) {
             GeoPt placeLocation =
                     new GeoPt(p.getLatitude().floatValue(), p.getLongitude().floatValue());
             double distance = PlaceUtil.getDistanceInMeters(origin,placeLocation);
@@ -53,7 +42,6 @@ public class PlaceUtil {
     public static double getDistanceInMeters(GeoPt location1, GeoPt location2){
 
         // derived from haversine
-        double radiusEarth = 6378137; // meters
         double loc1Lat = Math.toRadians(location1.getLatitude());
         double loc2Lat = Math.toRadians(location2.getLatitude());
         double latDelta = Math.toRadians(location2.getLatitude()-location1.getLatitude());
@@ -64,9 +52,7 @@ public class PlaceUtil {
                         Math.sin(lonDelta/2) * Math.sin(lonDelta/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
-        double distance = radiusEarth * c;
-
-        return distance;
+        return radiusEarthMeters * c;
     }
 
 
